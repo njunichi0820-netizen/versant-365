@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ja" style="background:#080c18 !important">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="color-scheme" content="dark">
+<title>Versant 365</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#080c18;--card:#0f1829;--border:#1c2840;--text:#dde4f0;--sub:#536380;--sub2:#374260;--p1:#4ADE80;--p2:#60A5FA;--p3:#F59E0B;--p4:#F472B6;--max-w:430px}
+html{background:var(--bg) !important;color-scheme:dark !important}
+body{height:100%;background:var(--bg) !important;color:var(--text) !important;font-family:-apple-system,'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;font-size:14px;overflow:hidden;-webkit-font-smoothing:antialiased}
+#app{max-width:var(--max-w);margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:var(--bg)}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0;z-index:10}
+.app-title{font-size:15px;font-weight:700;letter-spacing:.5px}
+.hpills{display:flex;gap:6px}
+.pill{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:3px}
+.tab-bar{display:flex;background:var(--card);border-top:1px solid var(--border);flex-shrink:0;z-index:10}
+.tab-bar button{flex:1;padding:8px 0 6px;background:none;border:none;color:var(--sub2);font-size:9px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;transition:color .2s;font-family:inherit}
+.tab-bar button.active{color:var(--p1)}
+.tab-bar button .ti{font-size:18px}
+
+/* Swipe container */
+.swipe-area{flex:1;overflow:hidden;position:relative}
+.swipe-track{display:flex;height:100%;transition:transform .3s ease}
+.swipe-track.no-anim{transition:none}
+.tp{min-width:100%;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px}
+.tp::-webkit-scrollbar{width:0}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px}
+.card-t{font-size:11px;color:var(--sub);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+.xp-sec{text-align:center;margin-bottom:4px}
+.lv-name{font-size:18px;font-weight:700;margin-bottom:2px}
+.xp-lbl{font-size:12px;color:var(--sub);margin-bottom:8px}
+.xp-bg{height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden}
+.xp-fill{height:100%;border-radius:5px;transition:width .5s ease}
+.sess-card{text-align:center}
+.phase-lbl{font-size:13px;margin-bottom:10px;opacity:.8}
+.sess-btns{display:flex;gap:10px;margin-top:10px}
+.sess-btn{flex:1;padding:14px 0;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.04);font-size:15px;color:var(--text);cursor:pointer;font-weight:600;transition:all .15s;font-family:inherit}
+.sess-btn:active:not(:disabled){transform:scale(.96)}
+.sess-btn:disabled{opacity:.45;cursor:default}
+.sess-btn.done{border-color:var(--p1);background:rgba(74,222,128,.1)}
+.comp-ban{margin-top:10px;padding:8px;border-radius:8px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);font-size:13px;font-weight:600;color:var(--p1);display:none}
+.comp-ban.show{display:block}
+.stats-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-i{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.stat-ic{font-size:18px;margin-bottom:3px}.stat-v{font-size:22px;font-weight:700}.stat-l{font-size:10px;color:var(--sub);margin-top:2px}
+.ph-info{font-size:12px;line-height:1.8;color:var(--sub)}.ph-info strong{color:var(--text)}
+.freeze-sec{display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.15);border-radius:10px;margin-top:10px}
+.freeze-info{font-size:12px;line-height:1.5}
+.freeze-count{font-size:20px;font-weight:700;color:var(--p2)}
+.freeze-buy{padding:6px 14px;border-radius:8px;border:1px solid rgba(96,165,250,.3);background:rgba(96,165,250,.1);color:var(--p2);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.freeze-buy:disabled{opacity:.4;cursor:default}
+.quest-card{border-color:rgba(74,222,128,.2)}
+.quest-title{font-size:14px;font-weight:700;margin-bottom:8px;color:var(--p1)}
+.quest-progress{display:flex;gap:4px;margin-bottom:10px}
+.quest-dot{width:100%;height:6px;border-radius:3px;background:rgba(255,255,255,.06)}
+.quest-dot.done{background:var(--p1)}
+.quest-dot.cur{background:rgba(74,222,128,.4);animation:pulse2 1.5s infinite}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:.5}}
+.quest-item{padding:10px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--border);font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.quest-reward{font-size:11px;color:var(--p1);font-weight:600}
+
+/* Roadmap */
+.rm-ts{font-size:11px;color:var(--sub);letter-spacing:2px;font-weight:700;text-transform:uppercase}
+.rm-tt{font-size:22px;font-weight:800;margin:4px 0 20px}
+.rm-tl{position:relative;padding-left:42px}
+.rm-tl::before{content:'';position:absolute;left:26px;top:30px;bottom:30px;width:2px;border-left:2px dashed var(--border)}
+.rm-n{position:relative;margin-bottom:8px}
+.rm-ic{position:absolute;left:-42px;top:0;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;z-index:2}
+.rm-ic.act{background:rgba(74,222,128,.15);border:2px solid var(--p1);box-shadow:0 0 20px rgba(74,222,128,.2)}
+.rm-ic.lk{background:rgba(255,255,255,.04);border:2px solid var(--border)}
+.rm-ic.cl{background:rgba(74,222,128,.1);border:2px solid var(--p1)}
+.rm-ph{margin-left:22px;border:1px dashed var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s}
+.rm-ph.at{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.04)}
+.rm-ph-hd{display:flex;justify-content:space-between;align-items:flex-start}
+.rm-ph-lb{font-size:12px;font-weight:700;margin-bottom:4px}
+.rm-ph-nm{font-size:16px;font-weight:700}
+.rm-ar{font-size:12px;color:var(--sub);transition:transform .3s;margin-top:6px}
+.rm-ph.open .rm-ar{transform:rotate(180deg)}
+.rm-ph-bd{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.rm-ph.open .rm-ph-bd{max-height:300px}
+.rm-ph-dt{padding-top:12px;margin-top:12px;border-top:1px solid var(--border)}
+.rm-ph-dt li{list-style:none;padding:4px 0;font-size:13px;color:var(--sub);display:flex;align-items:center;gap:8px}
+.rm-ph-dt li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--p2);flex-shrink:0}
+.rm-bs{margin-left:22px;margin-bottom:16px;display:flex;align-items:center;border:1px solid var(--border);border-radius:12px;padding:12px 16px;background:rgba(255,255,255,.02);gap:12px}
+.rm-bs-ic{font-size:22px;opacity:.4}.rm-bs-i{flex:1}
+.rm-bs-nm{font-size:14px;font-weight:700;color:var(--sub)}
+.rm-bs-ds{font-size:11px;color:var(--sub2);margin-top:2px}
+.rm-bs-xp{font-size:13px;font-weight:700;white-space:nowrap;color:var(--sub)}
+.rm-bs.dn .rm-bs-nm{color:var(--p1)}.rm-bs.dn .rm-bs-ic{opacity:1}.rm-bs.dn .rm-bs-xp{color:var(--p1)}
+
+/* Calendar */
+.yr-bg{height:8px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.06)}
+.yr-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--p1),var(--p2),var(--p3),var(--p4));transition:width .5s}
+.yr-lbl{font-size:12px;color:var(--sub);margin-top:6px;text-align:center}
+.m-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.m-nav button{background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;width:36px;height:36px;font-size:16px;cursor:pointer;font-family:inherit}
+.m-title{font-size:16px;font-weight:700;text-align:center}
+.m-sub{font-size:11px;color:var(--sub);text-align:center;margin-bottom:10px}
+.cal-h{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px}
+.cal-h span{text-align:center;font-size:10px;color:var(--sub2);font-weight:600}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-c{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:600;position:relative;border:1px solid transparent;cursor:pointer;transition:all .15s}
+.cal-c.empty{cursor:default}.cal-c.future{background:rgba(255,255,255,.02);color:var(--sub2);cursor:default}
+.cal-c.none{background:rgba(255,255,255,.04)}
+.cal-c.today{border:2px solid rgba(255,255,255,.5);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{border-color:rgba(255,255,255,.5)}50%{border-color:rgba(255,255,255,.15)}}
+.cal-c .dots{font-size:7px;line-height:1;margin-top:1px;letter-spacing:1px}
+.cal-c .star{position:absolute;top:1px;right:3px;font-size:7px}
+
+/* Badges */
+.badge-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.badge-i{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
+.badge-i.earned{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.06)}
+.badge-i.locked{opacity:.35;filter:grayscale(1)}
+.badge-ic{font-size:24px;margin-bottom:3px}.badge-n{font-size:11px;font-weight:700;margin-bottom:2px}.badge-c{font-size:9px;color:var(--sub);line-height:1.3}.badge-s{font-size:9px;margin-top:4px;font-weight:700;color:var(--p1)}
+
+/* Score */
+.sc-add{width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px;font-family:inherit}
+.chart-wrap{display:flex;align-items:flex-end;justify-content:center;gap:8px;height:170px;padding-bottom:24px}
+.chart-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;max-width:50px}
+.chart-diff{font-size:10px;font-weight:700}
+.chart-bar{width:100%;border-radius:6px 6px 0 0;min-height:4px;transition:height .5s}
+.chart-lbl{font-size:9px;color:var(--sub);white-space:nowrap}.chart-sc{font-size:11px;font-weight:700}
+.sc-refs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.sc-ref{font-size:10px;color:var(--sub);background:rgba(255,255,255,.04);padding:3px 8px;border-radius:6px}
+.sg-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px}
+.sg-row:last-child{border-bottom:none}
+.sg-sc{font-weight:700;font-size:14px;min-width:60px}.sg-lv{font-weight:600;min-width:50px}.sg-ds{flex:1;color:var(--sub);font-size:11px;text-align:right}
+.exam-item{padding:10px 0;border-bottom:1px solid var(--border)}.exam-item:last-child{border-bottom:none}
+.exam-top{display:flex;justify-content:space-between;align-items:center}
+.exam-dt{font-size:12px;color:var(--sub)}.exam-sv{font-size:18px;font-weight:700}.exam-nt{font-size:11px;color:var(--sub);margin-top:2px}
+.radar-wrap{width:200px;height:200px;margin:0 auto 10px}
+.radar-wrap svg{width:100%;height:100%}
+
+/* Modal */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.mo.show{display:flex}
+.mo-in{background:var(--card);border:1px solid var(--border);border-radius:18px 18px 0 0;width:100%;max-width:var(--max-w);padding:20px 20px 32px;transform:translateY(100%);transition:transform .3s ease}
+.mo.show .mo-in{transform:translateY(0)}
+.mo h3{font-size:16px;margin-bottom:16px;text-align:center}
+.mo label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px;margin-top:12px}
+.mo input,.mo textarea{width:100%;padding:10px 12px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit}
+.mo textarea{height:60px;resize:none}
+.mo-btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:16px;color:#fff;font-family:inherit}
+.mo-msg{text-align:center;font-size:13px;margin-top:8px;color:var(--sub)}
+.bk-ta{width:100%;height:100px;padding:10px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:10px;font-family:monospace;resize:none;margin-top:8px}
+.sub-score-row{display:flex;gap:8px;margin-top:8px}.sub-score-row label{flex:1;margin:0}.sub-score-row input{text-align:center}
+.cf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:250;display:none;align-items:center;justify-content:center}
+.cf-overlay.show{display:flex}
+.cf-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;width:90%;max-width:320px;text-align:center}
+.cf-title{font-size:16px;font-weight:700;margin-bottom:8px}.cf-msg{font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:20px}
+.cf-btns{display:flex;gap:10px}.cf-btns button{flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit}
+.cf-cancel{background:rgba(255,255,255,.06);color:var(--text)}.cf-danger{background:rgba(244,100,100,.2);color:#f46464}
+.celeb{position:fixed;inset:0;z-index:200;pointer-events:none;display:none}
+.celeb.show{display:block}
+.celeb .emo{position:absolute;top:50%;left:50%;font-size:28px;animation:burstTo 1.2s ease-out forwards}
+.celeb .msg{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);text-align:center;animation:fadeUp 2.2s ease forwards;max-width:300px}
+.celeb .msg-m{font-size:26px;font-weight:700}.celeb .msg-s{font-size:13px;color:var(--sub);margin-top:4px;line-height:1.4}
+@keyframes burstTo{0%{transform:translate(-50%,-50%) scale(0);opacity:1}60%{opacity:1;transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(1.2)}100%{opacity:0;transform:translate(calc(-50% + var(--tx)*1.5),calc(-50% + var(--ty)*1.5)) scale(.5)}}
+@keyframes fadeUp{0%{opacity:0;transform:translate(-50%,-50%) translateY(10px)}15%{opacity:1;transform:translate(-50%,-50%) translateY(0)}80%{opacity:1}100%{opacity:0}}
+.data-sec{margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.data-b{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:none;color:var(--sub);font-size:11px;cursor:pointer;margin-right:6px;font-family:inherit}
+.data-b.dng{border-color:rgba(244,100,100,.3);color:#f46464}
+.save-ind{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(74,222,128,.15);border:1px solid var(--p1);color:var(--p1);padding:8px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
+.save-ind.show{opacity:1}
+.loading{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;transition:opacity .4s}
+.loading.hide{opacity:0;pointer-events:none}
+.loading-spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--p1);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Daily mission */
+.mission-card{border-color:rgba(244,114,182,.3);background:linear-gradient(135deg,rgba(244,114,182,.06),rgba(96,165,250,.04))}
+.mission-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.mission-date{font-size:13px;font-weight:700;color:var(--p4)}
+.mission-countdown{font-size:11px;color:var(--p3);font-weight:600;background:rgba(245,158,11,.1);padding:2px 8px;border-radius:6px}
+.mission-prog{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.mission-prog-bar{flex:1;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.mission-prog-fill{height:100%;background:var(--p1);border-radius:3px;transition:width .4s ease}
+.mission-prog-text{font-size:10px;color:var(--sub);white-space:nowrap}
+.mt{padding:10px 12px;margin-bottom:8px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:all .25s;-webkit-user-select:none;user-select:none;position:relative;overflow:hidden}
+.mt:active{transform:scale(.98)}
+.mt.done{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.06)}
+.mt.done .mt-main{opacity:.6;text-decoration:line-through;text-decoration-color:rgba(74,222,128,.4)}
+.mt-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;font-size:12px}
+.mt.done .mt-check{border-color:var(--p1);background:var(--p1);color:#080c18}
+.mt-body{flex:1;min-width:0}
+.mt-main{font-size:13px;font-weight:600;line-height:1.4;transition:opacity .3s}
+.mt-sub{font-size:10px;color:var(--sub);margin-top:3px;line-height:1.4}
+.mt-xp{font-size:10px;color:var(--p1);font-weight:700;margin-top:3px}
+.mt-ripple{position:absolute;border-radius:50%;background:rgba(74,222,128,.25);transform:scale(0);animation:ripple .6s ease-out forwards;pointer-events:none}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+.mission-tip{margin-top:10px;padding:8px 10px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.15);border-radius:8px;font-size:11px;color:var(--sub);line-height:1.5}
+.mission-tip strong{color:var(--p1)}
+.mission-allclear{text-align:center;padding:16px 10px;font-size:15px;font-weight:700;color:var(--p1);animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.review-card{border-color:rgba(96,165,250,.25)}
+.review-tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:6px}
+.review-tag.r1{background:rgba(96,165,250,.15);color:var(--p2)}
+.review-tag.r3{background:rgba(245,158,11,.15);color:var(--p3)}
+.review-tag.r7{background:rgba(244,114,182,.15);color:var(--p4)}
+.rv-task{padding:8px 10px;margin-bottom:6px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:all .25s}
+.rv-task.done{border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.04);opacity:.6}
+.rv-task.done .rv-main{text-decoration:line-through;text-decoration-color:rgba(96,165,250,.4)}
+.rv-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;font-size:10px}
+.rv-task.done .rv-check{border-color:var(--p2);background:var(--p2);color:#080c18}
+.rv-main{font-size:12px;font-weight:600;line-height:1.4;transition:opacity .3s}
+.rv-sub{font-size:10px;color:var(--sub);margin-top:2px}
+/* Swipe indicator */
+.swipe-hint{text-align:center;font-size:10px;color:var(--sub2);padding:4px 0 0;letter-spacing:1px}
+</style>
+</head>
+<body style="background:#080c18 !important">
+<div class="loading" id="loadO"><div class="loading-spinner"></div></div>
+<div id="app">
+<header>
+  <div class="app-title">Versant 365</div>
+  <div class="hpills"><div class="pill" id="hStreak">🔥 0</div><div class="pill" id="hXP">⚡ 0</div></div>
+</header>
+<div class="swipe-hint">◀ スワイプでタブ切替 ▶</div>
+
+<div class="swipe-area" id="swipeArea">
+<div class="swipe-track" id="swipeTrack">
+
+<!-- TAB 0: HOME -->
+<div class="tp" id="pg0">
+  <!-- Daily Mission (unified: replaces old session buttons) -->
+  <div class="card mission-card" id="missionCard"></div>
+  <!-- Active Recall Review -->
+  <div class="card review-card" id="reviewCard" style="display:none"></div>
+  <!-- Streak Freeze -->
+  <div class="card" id="freezeCard" style="padding:12px">
+    <div class="freeze-sec" style="margin:0"><div class="freeze-info"><span class="freeze-count" id="fzC">0</span><span style="font-size:12px"> 枚</span><div style="font-size:10px;color:var(--sub);margin-top:2px">ストリークフリーズ保護券</div></div><button class="freeze-buy" id="fzBtn" onclick="buyFreeze()">200 XP で購入</button></div>
+  </div>
+  <div class="card quest-card" id="questCard" style="display:none"><div class="quest-title" id="questTitle"></div><div class="quest-progress" id="questProg"></div><div id="questBody"></div></div>
+  <div class="card xp-sec"><div class="lv-name" id="lvName"></div><div class="xp-lbl" id="xpText"></div><div class="xp-bg"><div class="xp-fill" id="xpFill"></div></div></div>
+  <div class="card"><div class="card-t">学習統計</div><div class="stats-g">
+    <div class="stat-i"><div class="stat-ic">🔥</div><div class="stat-v" id="sStreak">0</div><div class="stat-l">連続日数</div></div>
+    <div class="stat-i"><div class="stat-ic">📅</div><div class="stat-v" id="sDays">0</div><div class="stat-l">累計学習日数</div></div>
+    <div class="stat-i"><div class="stat-ic">⏱</div><div class="stat-v" id="sElap">0</div><div class="stat-l">経過日数</div></div>
+    <div class="stat-i"><div class="stat-ic">⚔️</div><div class="stat-v" id="sExam">0</div><div class="stat-l">受験回数</div></div>
+  </div></div>
+  <div class="card"><div class="card-t">現在のフェーズ</div><div class="ph-info" id="phInfo"></div></div>
+  <div class="card" style="border-color:rgba(96,165,250,.2)">
+    <div class="card-t">💰 年間コスト見通し</div>
+    <div style="font-size:12px;line-height:1.8;color:var(--sub)">
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span><strong style="color:var(--text)">Speak</strong>（AI英会話）</span><span style="color:var(--p1)">年1.3〜3万円</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span><strong style="color:var(--text)">シャドーイングアプリ</strong></span><span>月3千円台</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-size:11px">※シャドテン月2.2万は高額。シャドプラス/スタサプ推奨</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span><strong style="color:var(--text)">Cambly</strong>（P3〜投入）</span><span style="color:var(--p3)">月1〜1.5万円</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span><strong style="color:var(--text)">Versant受験</strong>（4回）</span><span>1回5,500円 × 4</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;margin-top:4px;background:rgba(96,165,250,.06);border-radius:6px;padding:8px">
+        <span><strong style="color:var(--text)">年間合計目安</strong></span>
+        <span style="color:var(--p2);font-weight:700;font-size:14px">約12〜20万円</span>
+      </div>
+      <div style="font-size:10px;color:var(--sub2);margin-top:6px">※ P1はSpeak+シャドーイングだけで月4〜5千円からスタート可能</div>
+    </div>
+  </div>
+  <div class="data-sec"><button class="data-b" onclick="openBkMo()">📤 バックアップ</button><button class="data-b" onclick="openRsMo()">📥 復元</button><button class="data-b dng" onclick="rstData()">🗑 リセット</button></div>
+</div>
+
+<!-- TAB 1: MAP -->
+<div class="tp" id="pg1"><div class="rm-ts">ROADMAP</div><div class="rm-tt">年間ロードマップ</div><div class="rm-tl" id="rmTL"></div></div>
+
+<!-- TAB 2: CAL -->
+<div class="tp" id="pg2">
+  <div class="card"><div class="card-t">年間進捗 2025.4 → 2026.3</div><div class="yr-bg"><div class="yr-fill" id="yrFill"></div></div><div class="yr-lbl" id="yrLbl"></div></div>
+  <div class="m-nav"><button onclick="chgMo(-1)">◀</button><div class="m-title" id="moTitle"></div><button onclick="chgMo(1)">▶</button></div>
+  <div class="m-sub" id="moSub"></div>
+  <div class="cal-h"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
+  <div class="cal-g" id="calG"></div>
+</div>
+
+<!-- TAB 3: BADGES -->
+<div class="tp" id="pg3"><div class="card"><div class="card-t">実績・バッジ</div><div class="badge-g" id="badgeG"></div></div></div>
+
+<!-- TAB 4: SCORE -->
+<div class="tp" id="pg4">
+  <button class="sc-add" onclick="openScMo()">📝 受験スコアを記録（+500 XP）</button>
+  <div class="card" id="radarCard" style="display:none"><div class="card-t">スキルレーダー（最新）</div><div class="radar-wrap"><svg id="radarSvg" viewBox="0 0 200 200"></svg></div><div id="radarLeg" style="text-align:center;font-size:11px;color:var(--sub)"></div></div>
+  <div class="card" id="chartCard" style="display:none"><div class="card-t">スコア推移</div><div class="chart-wrap" id="chartBars"></div><div class="sc-refs"><span class="sc-ref">38: 日本人平均</span><span class="sc-ref">43: 第1目標</span><span class="sc-ref">50: ビジネス基礎</span><span class="sc-ref" style="color:var(--p1);border:1px solid rgba(74,222,128,.3)">53-58: 最終目標</span></div></div>
+  <div class="card"><div class="card-t">Versant スコア目安</div>
+    <div class="sg-row"><span class="sg-sc">20〜34</span><span class="sg-lv" style="color:#f46464">初級</span><span class="sg-ds">簡単なやり取りが部分的に可能</span></div>
+    <div class="sg-row"><span class="sg-sc">35〜42</span><span class="sg-lv" style="color:var(--p3)">中級</span><span class="sg-ds">日本人平均38点付近。TOEIC高得点でも多い</span></div>
+    <div class="sg-row"><span class="sg-sc">43〜49</span><span class="sg-lv" style="color:var(--p1)">中級上</span><span class="sg-ds">CEFR B1。ビジネス英語の入門ライン</span></div>
+    <div class="sg-row" style="background:rgba(74,222,128,.05);border-radius:6px;padding:10px 6px"><span class="sg-sc" style="color:var(--p1)">50〜58</span><span class="sg-lv" style="color:var(--p1)">上級</span><span class="sg-ds" style="color:var(--p1)">CEFR B2。飲み会で自然に会話できる目標ゾーン</span></div>
+    <div class="sg-row"><span class="sg-sc">59〜80</span><span class="sg-lv" style="color:var(--p4)">最上級</span><span class="sg-ds">ネイティブに近い流暢さ</span></div>
+    <div style="margin-top:10px;padding:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.15);border-radius:8px;font-size:11px;color:var(--sub);line-height:1.6"><strong style="color:var(--text)">📌 TOEIC740 → Versant 53-58点ロードマップ</strong><br>TOEIC900台でもVersant平均52点。「知識はあるが口から出ない」状態をシャドーイング＋Speak AI英会話の2本柱で打破。<br><strong style="color:var(--p1)">最初の一歩：</strong>Versant1回受験（5,500円）で現在地把握 → Speak 7日間無料体験からスタート</div>
+  </div>
+  <div class="card" id="examLCard" style="display:none"><div class="card-t">受験履歴</div><div class="exam-list" id="examL"></div></div>
+</div>
+</div><!-- /swipe-track -->
+</div><!-- /swipe-area -->
+
+<nav class="tab-bar" id="tabBar">
+  <button class="active" onclick="goTab(0)"><span class="ti">🏠</span>ホーム</button>
+  <button onclick="goTab(1)"><span class="ti">🗺️</span>マップ</button>
+  <button onclick="goTab(2)"><span class="ti">📅</span>カレンダー</button>
+  <button onclick="goTab(3)"><span class="ti">🏅</span>実績</button>
+  <button onclick="goTab(4)"><span class="ti">📊</span>スコア</button>
+</nav>
+</div>
+
+<div class="mo" id="sessMo" onclick="closeMo(this,event)"><div class="mo-in"><h3 id="smT"></h3><div id="smD" style="text-align:center;font-size:13px;color:var(--sub);margin-bottom:10px"></div><div id="smB" style="text-align:center"></div></div></div>
+<div class="mo" id="scMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>Versant スコア記録</h3><label>受験日</label><input type="date" id="scDate"><label>総合スコア（20〜80）</label><input type="number" id="scVal" min="20" max="80" placeholder="42"><div class="sub-score-row"><label>流暢さ<input type="number" id="scFlu" min="20" max="80" placeholder="--"></label><label>発音<input type="number" id="scPro" min="20" max="80" placeholder="--"></label></div><div class="sub-score-row"><label>語彙<input type="number" id="scVoc" min="20" max="80" placeholder="--"></label><label>構文<input type="number" id="scSen" min="20" max="80" placeholder="--"></label></div><label>メモ</label><textarea id="scNote" placeholder="感想"></textarea><button class="mo-btn" style="background:var(--p1);color:#080c18" onclick="saveSc()">記録する (+500 XP)</button><div class="mo-msg" id="scMsg"></div></div></div>
+<div class="mo" id="bkMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>📤 バックアップ</h3><p style="font-size:12px;color:var(--sub);text-align:center">テキストをコピーして保存</p><textarea class="bk-ta" id="bkTa" readonly></textarea><button class="mo-btn" style="background:var(--p2)" onclick="copyBk()">📋 コピー</button><div class="mo-msg" id="bkMsg"></div></div></div>
+<div class="mo" id="rsMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>📥 復元</h3><textarea class="bk-ta" id="rsTa" placeholder='貼り付け' style="height:100px"></textarea><button class="mo-btn" style="background:var(--p1);color:#080c18" onclick="doRestore()">復元する</button><div class="mo-msg" id="rsMsg"></div></div></div>
+<div class="celeb" id="celeb"></div>
+<div class="cf-overlay" id="cfO"><div class="cf-box"><div class="cf-title" id="cfT"></div><div class="cf-msg" id="cfM"></div><div class="cf-btns"><button class="cf-cancel" onclick="closeCf()">キャンセル</button><button class="cf-danger" id="cfOk">削除</button></div></div></div>
+<div class="save-ind" id="saveInd">💾 保存</div>
+
+<script>
+/* ══════ CONFIG ══════ */
+const SK='v365_data',TAB_COUNT=5;
+const START=new Date(2025,3,1),END=new Date(2026,2,31);
+const PHASES=[
+  {id:1,m:[3,4,5],name:'Phase 1',period:'4〜6月',theme:'耳と口の回路構築',hex:'#4ADE80',am:'シャドーイング（停車中・声出し）',pm:'Speak AI英会話フリートーク',tools:'Speak(7日無料体験あり), シャドーイングアプリ',cost:'Speak年額1.3〜3万 + シャドーイングアプリ月3千円台 ≒ 月4〜5千円'},
+  {id:2,m:[6,7,8],name:'Phase 2',period:'7〜9月',theme:'アウトプット瞬発力',hex:'#60A5FA',am:'Speak 瞬間英作文モード',pm:'Podcast聴き流し（運転中）',tools:'Speak, English News系Podcast(無料)',cost:'Speak継続のみ ≒ 月1〜3千円'},
+  {id:3,m:[9,10,11],name:'Phase 3',period:'10〜12月',theme:'ネイティブ実戦練習',hex:'#F59E0B',am:'シャドーイング（弱点集中）',pm:'Cambly ネイティブ講師レッスン',tools:'Cambly(自動録画で復習可), シャドーイングアプリ',cost:'Cambly月1〜1.5万 + 既存 ≒ 月1.5〜2万円'},
+  {id:4,m:[0,1,2],name:'Phase 4',period:'1〜3月',theme:'総仕上げ・飲み会英語',hex:'#F472B6',am:'Cambly カジュアル会話練習',pm:'VERSANT模擬+弱点パート復習',tools:'Cambly, Speak, VERSANT公式アプリ',cost:'Cambly+Speak ≒ 月1.5〜2万円'}
+];
+const LEVELS=[{xp:0,name:'🌱 英語見習い'},{xp:300,name:'🎧 シャドーイング入門'},{xp:900,name:'🗣️ Speak実践中'},{xp:2000,name:'🔥 Cambly挑戦者'},{xp:4000,name:'👑 飲み会マスター'}];
+const BOSS=[{date:'2025-04-03',name:'Versant ①',desc:'4/3 — 初受験！現在地把握'},{date:'2025-09-30',name:'Versant ②',desc:'9月末 — 成長確認（目標43+）'},{date:'2025-12-31',name:'Versant ③',desc:'12月末 — 50点突破を狙う'},{date:'2026-03-31',name:'Versant ④',desc:'3月末 — 最終目標53〜58点'}];
+const EXAM_DATES=['2025-04-03','2025-09-30','2025-12-31','2026-03-31'];
+const BADGES=[
+  {id:'first',icon:'🌅',name:'はじめの一歩',cond:'最初のセッション完了'},{id:'s3',icon:'🔥',name:'3日の炎',cond:'3日連続学習'},{id:'s7',icon:'⚡',name:'一週間の戦士',cond:'7日連続'},{id:'s30',icon:'🏆',name:'鉄の意志',cond:'30日連続'},
+  {id:'d10',icon:'📗',name:'10日到達',cond:'累計10日'},{id:'d50',icon:'📘',name:'50日到達',cond:'累計50日'},{id:'d100',icon:'📕',name:'100日到達',cond:'累計100日'},{id:'d200',icon:'🌈',name:'200日到達',cond:'累計200日'},
+  {id:'xp500',icon:'💎',name:'XP 500',cond:'累計500XP'},{id:'xp2000',icon:'🌟',name:'XP 2000',cond:'累計2000XP'},{id:'xp5000',icon:'👑',name:'XP 5000',cond:'累計5000XP'},
+  {id:'exam1',icon:'⚔️',name:'初陣',cond:'初受験記録'},{id:'exam4',icon:'🎯',name:'全戦完了',cond:'4回受験'},{id:'scoreup',icon:'📈',name:'スコアUP',cond:'前回より高得点'},{id:'ampm',icon:'🌞',name:'朝夕の戦士',cond:'朝夕コンプリート'},{id:'p1clear',icon:'🗺️',name:'P1クリア',cond:'Phase1完走'}
+];
+const QUESTS=[
+  {id:'q1',desc:'朝セッションを初体験',check:D=>Object.values(D.days).some(d=>d.m),xp:50},
+  {id:'q2',desc:'夕セッションも完了',check:D=>Object.values(D.days).some(d=>d.e),xp:50},
+  {id:'q3',desc:'朝夕コンプリート達成',check:D=>Object.values(D.days).some(d=>d.m&&d.e),xp:80},
+  {id:'q4',desc:'カレンダーで進捗確認',check:D=>D.questFlags?.includes('cal_viewed'),xp:30},
+  {id:'q5',desc:'3日連続で学習',check:D=>D.streak>=3,xp:100},
+  {id:'q6',desc:'フリーズ券を購入',check:D=>(D.freezes||0)>0||D.questFlags?.includes('freeze_bought'),xp:50},
+  {id:'q7',desc:'7日連続達成！',check:D=>D.streak>=7,xp:200}
+];
+function dynMsg(){
+  const h=new Date().getHours(),s=D.streak,td=totalDays(),ph=getCurPhase(),pool=[];
+  // Versant countdown
+  const examDate=new Date(2025,3,3),now=new Date();now.setHours(0,0,0,0);
+  const daysUntil=Math.ceil((examDate-now)/864e5);
+  if(daysUntil>0&&daysUntil<=7)pool.push(`Versant受験まであと${daysUntil}日！準備は順調！`);
+  if(daysUntil===0)pool.push('今日がVersant本番！落ち着いて実力を出そう！');
+  if(h<12)pool.push('朝のシャドーイングは記憶定着率UP！','通勤前の一声が1日を変える！');
+  else pool.push('お疲れ様！今日もやり切った！','夕方の復習で脳に刻む！');
+  if(s>=1&&s<7)pool.push(`あと${7-s}日で1週間連続！`);
+  if(s===7)pool.push('1週間連続！習慣化してきた！');
+  if(s===30)pool.push('30日の鉄の意志！飲み会マスターへの道！');
+  if(td%10===0&&td>0)pool.push(`${td}日目！着実に口から英語が出るようになる！`);
+  if(ph.id===1)pool.push('耳と口の回路を作る時期。量が質を生む！');
+  if(ph.id===2)pool.push('瞬発力強化中！考える前に英語を出す！');
+  if(ph.id===3)pool.push('ネイティブとの実戦！Cambly録画で復習！');
+  if(ph.id===4)pool.push('ゴール目前！飲み会で堂々と話せる！');
+  pool.push(ph.name+'を順調にクリア中！');
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+/* ══════ DATA ══════ */
+let D;const useWS=(typeof window.storage!=='undefined');
+function fresh(){return{days:{},xp:0,streak:0,lastDate:null,exams:[],badges:[],freezes:0,questFlags:[],questComplete:false,missionDone:{},reviewDone:{}}}
+function validate(d){if(!d||typeof d!=='object')return fresh();if(!d.days)d.days={};if(typeof d.xp!=='number')d.xp=0;if(!Array.isArray(d.exams))d.exams=[];if(!Array.isArray(d.badges))d.badges=[];if(typeof d.freezes!=='number')d.freezes=0;if(!Array.isArray(d.questFlags))d.questFlags=[];if(!d.missionDone||typeof d.missionDone!=='object')d.missionDone={};if(!d.reviewDone||typeof d.reviewDone!=='object')d.reviewDone={};return d}
+async function load(){try{if(useWS){const r=await window.storage.get(SK);D=r&&r.value?validate(JSON.parse(r.value)):fresh()}else{const raw=localStorage.getItem(SK);D=raw?validate(JSON.parse(raw)):fresh()}}catch(e){D=fresh()}}
+async function save(){try{const j=JSON.stringify(D);if(useWS)await window.storage.set(SK,j);else localStorage.setItem(SK,j);showSv()}catch(e){}}
+let svT;function showSv(){const el=document.getElementById('saveInd');el.classList.add('show');clearTimeout(svT);svT=setTimeout(()=>el.classList.remove('show'),800)}
+function todayStr(){return fmt(new Date())}
+function fmt(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function parseDD(s){const p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])}
+function getPhase(d){const m=(typeof d==='string'?parseDD(d):d).getMonth();return PHASES.find(p=>p.m.includes(m))||PHASES[0]}
+function getCurPhase(){return getPhase(new Date())}
+function getLv(xp){let lv=LEVELS[0];for(const l of LEVELS)if(xp>=l.xp)lv=l;return lv}
+function getNextLv(xp){for(const l of LEVELS)if(xp<l.xp)return l;return null}
+function calcStreak(){let s=0,d=new Date();d.setHours(0,0,0,0);if(D.days[todayStr()]){s=1;d.setDate(d.getDate()-1)}while(true){const k=fmt(d);if(D.days[k]){s++;d.setDate(d.getDate()-1)}else if(D.freezes>0&&s>0){D.freezes--;s++;d.setDate(d.getDate()-1)}else break}D.streak=s}
+function elapsed(){const n=new Date();n.setHours(0,0,0,0);return Math.max(0,Math.floor((n-START)/864e5)+1)}
+function totalDays(){return Object.keys(D.days).length}
+function yrStudy(){let c=0;for(const k in D.days){const d=parseDD(k);if(d>=START&&d<=END)c++}return c}
+function checkBadges(){const b=D.badges,a=id=>{if(!b.includes(id))b.push(id)},td=totalDays();if(td>0)a('first');if(D.streak>=3)a('s3');if(D.streak>=7)a('s7');if(D.streak>=30)a('s30');if(td>=10)a('d10');if(td>=50)a('d50');if(td>=100)a('d100');if(td>=200)a('d200');if(D.xp>=500)a('xp500');if(D.xp>=2000)a('xp2000');if(D.xp>=5000)a('xp5000');if(D.exams.length>0)a('exam1');if(D.exams.length>=4)a('exam4');if(D.exams.length>=2){const sorted=[...D.exams].sort((x,y)=>x.date.localeCompare(y.date));for(let i=1;i<sorted.length;i++){if(sorted[i].score>sorted[i-1].score){a('scoreup');break}}}const ts=todayStr();if(D.days[ts]&&D.days[ts].m&&D.days[ts].e)a('ampm');if(new Date()>=new Date(2025,5,30)){let ok=true;for(let dd=new Date(2025,3,1);dd<=new Date(2025,5,30);dd.setDate(dd.getDate()+1)){if(!D.days[fmt(dd)]){ok=false;break}}if(ok)a('p1clear')}}
+function celebrate(m,s){const el=document.getElementById('celeb');const em=['⭐','✨','💫','🎊','⭐','✨','💫','🎊'];let h='<div class="msg"><div class="msg-m">🎉 '+m+'</div><div class="msg-s">'+s+'</div></div>';em.forEach((e,i)=>{const a=(i/8)*360,r=a*Math.PI/180,d=80+Math.random()*40;h+=`<span class="emo" style="--tx:${Math.cos(r)*d}px;--ty:${Math.sin(r)*d}px;animation-delay:${i*50}ms">${e}</span>`});el.innerHTML=h;el.classList.add('show');setTimeout(()=>{el.classList.remove('show');el.innerHTML=''},2400)}
+async function buyFreeze(){if(D.xp<200)return;D.xp-=200;D.freezes++;if(!D.questFlags.includes('freeze_bought'))D.questFlags.push('freeze_bought');await save();celebrate('フリーズ券GET！','保護+1枚');render()}
+
+/* ══════ SWIPE ══════ */
+let curTab=0;
+const track=()=>document.getElementById('swipeTrack');
+const tabBtns=()=>document.querySelectorAll('#tabBar button');
+function goTab(i){
+  if(i===curTab){track().style.transform=`translateX(-${i*100}%)`;return}
+  curTab=i;track().style.transform=`translateX(-${i*100}%)`;
+  tabBtns().forEach((b,j)=>b.classList.toggle('active',j===i));
+  if(i===1)renderRM();if(i===2)renderCal();
+}
+(function initSwipe(){
+  let sx,sy,dx,moving=false;
+  const el=document.getElementById('swipeArea');
+  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;dx=0;moving=false},{passive:true});
+  el.addEventListener('touchmove',e=>{
+    const x=e.touches[0].clientX,y=e.touches[0].clientY;
+    if(!moving){if(Math.abs(x-sx)>Math.abs(y-sy)*1.2&&Math.abs(x-sx)>10)moving=true;else return}
+    dx=x-sx;
+    track().classList.add('no-anim');
+    track().style.transform=`translateX(calc(-${curTab*100}% + ${dx}px))`;
+  },{passive:true});
+  el.addEventListener('touchend',()=>{
+    track().classList.remove('no-anim');
+    if(moving&&Math.abs(dx)>50){
+      if(dx<0&&curTab<TAB_COUNT-1)goTab(curTab+1);
+      else if(dx>0&&curTab>0)goTab(curTab-1);
+      else track().style.transform=`translateX(-${curTab*100}%)`;
+    }else{
+      track().style.transform=`translateX(-${curTab*100}%)`;
+    }
+    dx=0;moving=false;
+  },{passive:true});
+})();
+
+/* ══════ DAILY MISSION & ACTIVE RECALL ══════ */
+const DAILY_PLAN=[
+  {date:'2025-03-28',focus:'形式を知る Day1',icon:'📖',tasks:[
+    {text:'Versant 6パートの構成を確認する',time:'5分',tip:'Reading, Repeat, Short Answer, Sentence Builds, Story Retelling, Open Questions'},
+    {text:'YouTubeで「Versant test sample」を1本視聴',time:'10〜15分',tip:'全体の雰囲気をつかむだけでOK'}
+  ],recall:'Versantの6パート構成',recallTip:'寝る前に6パート名を思い出してみる（見ないで！）'},
+  {date:'2025-03-29',focus:'形式を知る Day2',icon:'🎬',tasks:[
+    {text:'Versant公式アプリでサンプル問題を体験',time:'15分',tip:'採点されないので気軽にやってみる'},
+    {text:'各パートの回答のコツをメモ',time:'5分',tip:'Repeatは一語一句正確に、Readingは速く明瞭に'}
+  ],recall:'パート別の回答のコツ',recallTip:'メモを見ずに、各パートで何を意識すべきか思い出す'},
+  {date:'2025-03-30',focus:'Repeat 集中練習',icon:'🔁',tasks:[
+    {text:'英語音声を聞いて即リピート練習',time:'15分',tip:'NHKラジオ英会話、Podcast、TEDなんでもOK'},
+    {text:'長い文も区切って繰り返す練習',time:'5分',tip:'聞き取れなくても音を真似て口に出すことが大事'}
+  ],recall:'Repeatパートの感覚',recallTip:'通勤中に英語を聞いたら心の中でリピートしてみる'},
+  {date:'2025-03-31',focus:'Reading 音読練習',icon:'📕',tasks:[
+    {text:'英文を声に出して速く・はっきり読む',time:'15分',tip:'BBC Learning English等の短い記事がおすすめ'},
+    {text:'つっかえた箇所を3回繰り返す',time:'5分',tip:'流暢さと発音が評価される。完璧より滑らかさ重視'}
+  ],recall:'音読の滑らかさ',recallTip:'3/28の6パート名をもう一度思い出す（3日後復習）'},
+  {date:'2025-04-01',focus:'Short Answer 短答練習',icon:'💬',tasks:[
+    {text:'簡単な英語質問に即答する練習',time:'15分',tip:'「What do you do on weekends?」「What\'s the opposite of hot?」など'},
+    {text:'Speak アプリでフリートーク体験',time:'10分',tip:'7日間無料体験を開始するタイミング！'}
+  ],recall:'瞬間応答の感覚',recallTip:'3/29のパート別コツを見ずに思い出す（3日後復習）'},
+  {date:'2025-04-02',focus:'全体通し練習',icon:'⚡',tasks:[
+    {text:'サンプル問題を本番のつもりで通す',time:'20分',tip:'静かな場所で、時間を測って本番環境を再現'},
+    {text:'弱かったパートをメモ',time:'5分',tip:'明日の本番で意識するポイントを1つだけ決める'}
+  ],recall:'全パート通しの感触',recallTip:'3/30のRepeatの感覚を思い出す（3日後復習）'},
+  {date:'2025-04-03',focus:'🎯 Versant ① 受験日！',icon:'⚔️',tasks:[
+    {text:'静かな場所・イヤホン・スマホを準備',time:'受験前',tip:'車内でもOK。エンジン切って静かな状態で'},
+    {text:'Versant受験（約20分）',time:'20分',tip:'初回はベースライン計測。緊張しても気にしない！'},
+    {text:'スコアが出たらアプリに記録',time:'5分',tip:'サブスコア（流暢さ・発音・語彙・構文）も記録すると成長が見える'}
+  ],recall:'受験体験と自分の弱点',recallTip:'結果を振り返り、どのパートが難しかったか記録する'}
+];
+
+// Active Recall intervals (安川康介メソッド: 1日後, 3日後, 7日後)
+const RECALL_INTERVALS=[1,3,7];
+
+function getMissionKey(date,idx){return date+'_t'+idx}
+function isTaskDone(date,idx){return!!D.missionDone[getMissionKey(date,idx)]}
+function isReviewDone(key){return!!D.reviewDone[key]}
+
+async function toggleTask(date,idx,e){
+  const key=getMissionKey(date,idx);
+  if(D.missionDone[key])return;
+  D.missionDone[key]=true;
+  D.xp+=30;
+  // If this is a phase am/pm task, also record session
+  if(idx==='am'){if(!D.days[date])D.days[date]={m:false,e:false};D.days[date].m=true;D.lastDate=date}
+  if(idx==='pm'){if(!D.days[date])D.days[date]={m:false,e:false};D.days[date].e=true;D.lastDate=date}
+  // Ripple
+  const el=e.currentTarget;
+  const rect=el.getBoundingClientRect();
+  const x=(e.touches?e.touches[0]:e).clientX-rect.left;
+  const y=(e.touches?e.touches[0]:e).clientY-rect.top;
+  const rip=document.createElement('div');
+  rip.className='mt-ripple';
+  rip.style.cssText=`left:${x}px;top:${y}px;width:60px;height:60px;margin:-30px`;
+  el.appendChild(rip);
+  setTimeout(()=>rip.remove(),600);
+  await save();
+  const msg=dynMsg();
+  celebrate('完了！',msg+' (+30 XP)');
+  renderMission();render();
+}
+
+async function toggleReview(key,e){
+  if(D.reviewDone[key])return;
+  D.reviewDone[key]=true;
+  D.xp+=15;
+  const el=e.currentTarget;
+  const rect=el.getBoundingClientRect();
+  const x=(e.touches?e.touches[0]:e).clientX-rect.left;
+  const y=(e.touches?e.touches[0]:e).clientY-rect.top;
+  const rip=document.createElement('div');
+  rip.className='mt-ripple';
+  rip.style.cssText=`left:${x}px;top:${y}px;width:60px;height:60px;margin:-30px`;
+  el.appendChild(rip);
+  setTimeout(()=>rip.remove(),600);
+  await save();
+  celebrate('復習完了！','+15 XP 記憶に定着！');
+  renderMission();render();
+}
+
+function renderMission(){
+  const today=todayStr();
+  const mission=DAILY_PLAN.find(p=>p.date===today);
+  const el=document.getElementById('missionCard');
+  const examDate=new Date(2025,3,3);
+  const now=new Date();now.setHours(0,0,0,0);
+  const daysUntil=Math.ceil((examDate-now)/864e5);
+
+  // === Post-exam: Phase-based AM/PM tasks ===
+  if(!mission&&daysUntil<0){
+    const ph=getCurPhase();
+    const dAm=isTaskDone(today,'am'),dPm=isTaskDone(today,'pm');
+    const done=(dAm?1:0)+(dPm?1:0),pct=Math.round(done/2*100);
+    el.style.display='block';
+    el.innerHTML=`<div class="mission-header"><div class="mission-date">📋 今日のミッション</div><div class="mission-countdown" style="background:rgba(74,222,128,.1);color:var(--p1)">${done}/2</div></div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:8px">${ph.name} — ${ph.theme}</div>
+      <div class="mission-prog"><div class="mission-prog-bar"><div class="mission-prog-fill" style="width:${pct}%"></div></div><div class="mission-prog-text">${pct}%</div></div>
+      ${done>=2?'<div class="mission-allclear">🎊 朝夕コンプリート！</div>':''}
+      <div class="mt ${dAm?'done':''}" onclick="toggleTask('${today}','am',event)">
+        <div class="mt-check">${dAm?'✓':''}</div>
+        <div class="mt-body"><div class="mt-main">🌅 朝：${ph.am}</div><div class="mt-sub">停車中・声出し 15〜20分</div><div class="mt-xp">+30 XP</div></div>
+      </div>
+      <div class="mt ${dPm?'done':''}" onclick="toggleTask('${today}','pm',event)">
+        <div class="mt-check">${dPm?'✓':''}</div>
+        <div class="mt-body"><div class="mt-main">🌙 夕：${ph.pm}</div><div class="mt-sub">通勤中 15〜20分</div><div class="mt-xp">+30 XP</div></div>
+      </div>
+      <div class="mission-tip"><strong>💡 アクティブリコール：</strong>昨日学んだ内容を、テキストを見ずに思い出してから今日の学習を開始しよう</div>`;
+    // All-clear bonus
+    if(done>=2&&!D.missionDone[today+'_allclear']){
+      D.missionDone[today+'_allclear']=true;D.xp+=30;save();
+      celebrate('朝夕コンプリート！','ボーナス +30 XP！');
+    }
+    renderReviewCard();return;
+  }
+
+  // === Pre-exam gap day ===
+  if(!mission){
+    if(daysUntil>0){
+      el.innerHTML=`<div class="mission-header"><div class="mission-date">📋 Versant受験準備</div><div class="mission-countdown">あと${daysUntil}日</div></div>
+        <div class="mission-tip"><strong>💡 今日のヒント：</strong>YouTubeで「Versant test sample」を検索して形式を把握しよう</div>`;
+    }else{el.style.display='none'}
+    renderReviewCard();return;
+  }
+
+  // === Planned daily mission (3/28〜4/3) ===
+  el.style.display='block';
+  const tasks=mission.tasks;
+  let doneCount=0;
+  tasks.forEach((_,i)=>{if(isTaskDone(mission.date,i))doneCount++});
+  const total=tasks.length,pct=Math.round(doneCount/total*100);
+  const allDone=doneCount>=total;
+
+  let countdownHtml='';
+  if(daysUntil>0)countdownHtml=`<div class="mission-countdown">受験まであと${daysUntil}日</div>`;
+  else if(daysUntil===0)countdownHtml=`<div class="mission-countdown" style="background:rgba(244,114,182,.15);color:var(--p4)">🎯 今日が本番！</div>`;
+
+  let tasksHtml='';
+  tasks.forEach((t,i)=>{
+    const done=isTaskDone(mission.date,i);
+    tasksHtml+=`<div class="mt ${done?'done':''}" onclick="toggleTask('${mission.date}',${i},event)">
+      <div class="mt-check">${done?'✓':''}</div>
+      <div class="mt-body">
+        <div class="mt-main">${t.text}</div>
+        <div class="mt-sub">⏱ ${t.time}${t.tip?' — '+t.tip:''}</div>
+        <div class="mt-xp">+30 XP</div>
+      </div>
+    </div>`;
+  });
+
+  // Pre-exam tasks also count as a "study day" for streak
+  if(doneCount>0){
+    if(!D.days[mission.date])D.days[mission.date]={m:false,e:false};
+    if(!D.days[mission.date].m){D.days[mission.date].m=true;D.lastDate=mission.date}
+  }
+
+  el.innerHTML=`<div class="mission-header"><div class="mission-date">${mission.icon} ${mission.focus}</div>${countdownHtml}</div>
+    <div class="mission-prog"><div class="mission-prog-bar"><div class="mission-prog-fill" style="width:${pct}%"></div></div><div class="mission-prog-text">${doneCount}/${total}</div></div>
+    ${allDone?'<div class="mission-allclear">🎊 本日のミッション全完了！</div>':''}
+    ${tasksHtml}
+    ${mission.recallTip?`<div class="mission-tip"><strong>🧠 アクティブリコール（安川式）：</strong>${mission.recallTip}</div>`:''}`;
+
+  if(allDone&&!D.missionDone[mission.date+'_allclear']){
+    D.missionDone[mission.date+'_allclear']=true;
+    D.xp+=30;save();
+    celebrate('ミッション全完了！','ボーナス +30 XP！');
+  }
+  renderReviewCard();
+}
+
+function renderReviewCard(){
+  const today=todayStr();
+  const reviews=[];
+  DAILY_PLAN.forEach(plan=>{
+    const planDate=parseDD(plan.date);
+    if(!plan.recall)return;
+    RECALL_INTERVALS.forEach(interval=>{
+      const rd=new Date(planDate);rd.setDate(rd.getDate()+interval);
+      if(fmt(rd)===today){
+        reviews.push({key:plan.date+'_rv'+interval,original:plan.focus,recall:plan.recall,recallTip:plan.recallTip||'テキストを見ずに思い出してみよう',interval,originDate:plan.date});
+      }
+    });
+  });
+  const el=document.getElementById('reviewCard');
+  if(!reviews.length){el.style.display='none';return}
+
+  el.style.display='block';
+  let doneR=0;reviews.forEach(r=>{if(isReviewDone(r.key))doneR++});
+  const pctR=Math.round(doneR/reviews.length*100);
+
+  let html=`<div class="card-t">🧠 アクティブリコール復習</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:8px;line-height:1.5">安川康介メソッド：1日後→3日後→7日後の想起で長期記憶へ</div>
+    <div class="mission-prog" style="margin-bottom:10px"><div class="mission-prog-bar"><div class="mission-prog-fill" style="width:${pctR}%;background:var(--p2)"></div></div><div class="mission-prog-text">${doneR}/${reviews.length}</div></div>`;
+
+  reviews.forEach(r=>{
+    const done=isReviewDone(r.key);
+    const tagClass=r.interval===1?'r1':r.interval===3?'r3':'r7';
+    html+=`<div class="rv-task ${done?'done':''}" onclick="toggleReview('${r.key}',event)" style="position:relative;overflow:hidden">
+      <div class="rv-check">${done?'✓':''}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div class="rv-main">${r.recall}</div>
+          <span class="review-tag ${tagClass}">${r.interval}日後</span>
+        </div>
+        <div class="rv-sub">📅 ${r.originDate}の復習 — ${r.recallTip}</div>
+        <div class="mt-xp">+15 XP</div>
+      </div>
+    </div>`;
+  });
+
+  if(doneR>=reviews.length)html+='<div class="mission-allclear" style="color:var(--p2)">🧠 復習完了！記憶に定着中...</div>';
+  el.innerHTML=html;
+}
+
+/* ══════ RENDER ══════ */
+function render(){
+  calcStreak();checkBadges();
+  const ts=todayStr(),ph=getCurPhase(),lv=getLv(D.xp),nx=getNextLv(D.xp);
+  document.getElementById('hStreak').textContent='🔥 '+D.streak;
+  document.getElementById('hXP').textContent='⚡ '+D.xp;
+  document.getElementById('lvName').textContent=lv.name;
+  const xpF=document.getElementById('xpFill');
+  if(nx){xpF.style.width=Math.min(100,((D.xp-lv.xp)/(nx.xp-lv.xp))*100)+'%';document.getElementById('xpText').textContent=D.xp+' / '+nx.xp+' XP'}
+  else{xpF.style.width='100%';document.getElementById('xpText').textContent=D.xp+' XP — MAX!'}
+  xpF.style.background=ph.hex;
+  document.getElementById('fzC').textContent=D.freezes||0;
+  document.getElementById('fzBtn').disabled=D.xp<200;
+  document.getElementById('sStreak').textContent=D.streak;
+  document.getElementById('sDays').textContent=totalDays();
+  document.getElementById('sElap').textContent=elapsed();
+  document.getElementById('sExam').textContent=D.exams.length;
+  document.getElementById('phInfo').innerHTML='<strong>'+ph.name+'</strong>（'+ph.theme+'）<br>🌅 朝：'+ph.am+'<br>🌙 夕：'+ph.pm+(ph.tools?'<br>🔧 '+ph.tools:'')+(ph.cost?'<br>💰 目安：'+ph.cost:'');
+  renderQuest();renderBadges();renderScores();renderRadar();renderMission();
+}
+// Record session (called from mission tasks and calendar modal)
+async function recSess(type){const ts=todayStr();if(!D.days[ts])D.days[ts]={m:false,e:false};if(D.days[ts][type])return;D.days[ts][type]=true;D.lastDate=ts;await save()}
+
+/* Quest */
+function renderQuest(){
+  if(D.questComplete||totalDays()>14){D.questComplete=true;document.getElementById('questCard').style.display='none';return}
+  document.getElementById('questCard').style.display='block';
+  let done=0;QUESTS.forEach(q=>{if(q.check(D))done++});
+  let ph='';for(let i=0;i<7;i++)ph+=`<div class="quest-dot${i<done?' done':i===done?' cur':''}"></div>`;
+  document.getElementById('questProg').innerHTML=ph;
+  document.getElementById('questTitle').textContent=done>=7?'🎊 クエスト完了！':'7日間スタータークエスト（'+done+'/7）';
+  if(done>=7){document.getElementById('questBody').innerHTML='<div style="text-align:center;padding:8px;font-size:13px;color:var(--p1)">全ミッション達成！</div>';if(!D.questComplete){D.questComplete=true;save()}}
+  else{const c=QUESTS[done];document.getElementById('questBody').innerHTML=`<div class="quest-item"><div>Day ${done+1}: ${c.desc}</div><div class="quest-reward">+${c.xp} XP</div></div>`}
+  if(!D.questFlags)D.questFlags=[];
+  QUESTS.forEach((q,i)=>{const ck='claimed_q'+i;if(q.check(D)&&!D.questFlags.includes(ck)){D.questFlags.push(ck);D.xp+=q.xp}});
+}
+
+/* Roadmap */
+function renderRM(){const cur=getCurPhase(),ci=PHASES.indexOf(cur);let h='';PHASES.forEach((ph,i)=>{const ic=i===ci,ip=i<ci;h+=`<div class="rm-n"><div class="rm-ic ${ic?'act':ip?'cl':'lk'}">${ic?'⚡':ip?'✅':'🔒'}</div><div class="rm-ph${ic?' at open':''}" onclick="this.classList.toggle('open')"><div class="rm-ph-hd"><div><div class="rm-ph-lb" style="color:${ph.hex}">${ph.name}・${ph.period}</div><div class="rm-ph-nm">${ph.theme}</div></div><div class="rm-ar">▼</div></div><div class="rm-ph-bd"><div class="rm-ph-dt"><li>${ph.am}（朝・停車中）</li><li>${ph.pm}（夕・通勤中）</li>${ph.tools?'<li style="color:var(--p2)">🔧 '+ph.tools+'</li>':''}${ph.cost?'<li style="color:var(--sub)">💰 '+ph.cost+'</li>':''}</div></div></div></div>`;const b=BOSS[i],bd=D.exams.some(e=>e.date===b.date);h+=`<div class="rm-n"><div class="rm-bs${bd?' dn':''}"><div class="rm-bs-ic">⚔️</div><div class="rm-bs-i"><div class="rm-bs-nm">${b.name}</div><div class="rm-bs-ds">${b.desc}</div></div><div class="rm-bs-xp">+500 XP</div></div></div>`});document.getElementById('rmTL').innerHTML=h}
+
+/* Calendar */
+let cMo,cYr;
+function initCal(){const n=new Date();cMo=n.getMonth();cYr=n.getFullYear();clampMo()}
+function clampMo(){if(cYr<2025||(cYr===2025&&cMo<3)){cYr=2025;cMo=3}if(cYr>2026||(cYr===2026&&cMo>2)){cYr=2026;cMo=2}}
+function chgMo(d){cMo+=d;if(cMo>11){cMo=0;cYr++}if(cMo<0){cMo=11;cYr--}clampMo();renderCal()}
+function renderCal(){
+  const now=new Date();now.setHours(0,0,0,0);const ph=getPhase(new Date(cYr,cMo,1)),ic=(cMo===now.getMonth()&&cYr===now.getFullYear());
+  const mN=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  document.getElementById('moTitle').textContent=cYr+'年'+mN[cMo]+(ic?' 📍':'');
+  const dim=new Date(cYr,cMo+1,0).getDate();let sc=0;for(let d=1;d<=dim;d++){if(D.days[fmt(new Date(cYr,cMo,d))])sc++}
+  document.getElementById('moSub').textContent=ph.name+' — '+sc+'/'+dim+'日';
+  const fd=new Date(cYr,cMo,1).getDay();let html='';
+  for(let i=0;i<fd;i++)html+='<div class="cal-c empty"></div>';
+  for(let d=1;d<=dim;d++){const dt=new Date(cYr,cMo,d);dt.setHours(0,0,0,0);const k=fmt(dt),day=D.days[k],isFut=dt>now,isToday=dt.getTime()===now.getTime(),isEx=EXAM_DATES.includes(k);let cls='cal-c',sty='',dots='',star=isEx?'<span class="star">★</span>':'';if(isFut)cls+=' future';else if(!day)cls+=' none';else{const p=getPhase(dt);if(day.m&&day.e){sty=`background:${p.hex}33;color:${p.hex}`;dots='●●'}else if(day.m){sty=`background:${p.hex}1a;color:${p.hex}`;dots='●○'}else{sty=`background:${p.hex}22;color:${p.hex}`;dots='○●'}}if(isToday)cls+=' today';html+=`<div class="${cls}" style="${sty}"${!isFut?` onclick="openDayMo('${k}')"`:''}>${d}<span class="dots">${dots}</span>${star}</div>`}
+  document.getElementById('calG').innerHTML=html;
+  const yd=yrStudy(),pct=Math.round((yd/365)*100);document.getElementById('yrFill').style.width=pct+'%';document.getElementById('yrLbl').textContent=yd+'/365日 ('+pct+'%)';
+  if(!D.questFlags)D.questFlags=[];if(!D.questFlags.includes('cal_viewed')){D.questFlags.push('cal_viewed');save()}
+}
+function openDayMo(ds){const now=new Date();now.setHours(0,0,0,0);if(parseDD(ds)>now)return;const day=D.days[ds]||{m:false,e:false};document.getElementById('smT').textContent='セッション記録';document.getElementById('smD').textContent=ds;document.getElementById('smB').innerHTML=`<button class="sess-btn${day.m?' done':''}" style="margin:6px;min-width:180px" onclick="recDaySess('${ds}','m')" ${day.m?'disabled':''}>${day.m?'✅':'🌅'} 朝</button><br><button class="sess-btn${day.e?' done':''}" style="margin:6px;min-width:180px" onclick="recDaySess('${ds}','e')" ${day.e?'disabled':''}>${day.e?'✅':'🌙'} 夕</button>`;document.getElementById('sessMo').classList.add('show')}
+async function recDaySess(ds,t){const now=new Date();now.setHours(0,0,0,0);if(parseDD(ds)>now)return;if(!D.days[ds])D.days[ds]={m:false,e:false};if(D.days[ds][t])return;D.days[ds][t]=true;D.xp+=30;D.lastDate=ds;await save();celebrate('完了！',dynMsg()+' (+30 XP)');document.getElementById('sessMo').classList.remove('show');render();renderCal();renderRM()}
+
+/* Badges */
+function renderBadges(){let h='';BADGES.forEach(b=>{const e=D.badges.includes(b.id);h+=`<div class="badge-i ${e?'earned':'locked'}"><div class="badge-ic">${b.icon}</div><div class="badge-n">${b.name}</div><div class="badge-c">${b.cond}</div>${e?'<div class="badge-s">✓</div>':''}</div>`});document.getElementById('badgeG').innerHTML=h}
+
+/* Score */
+function openScMo(){document.getElementById('scDate').value=todayStr();['scVal','scFlu','scPro','scVoc','scSen','scNote'].forEach(id=>document.getElementById(id).value='');document.getElementById('scMsg').textContent='';document.getElementById('scMo').classList.add('show')}
+async function saveSc(){const date=document.getElementById('scDate').value,val=parseInt(document.getElementById('scVal').value),note=document.getElementById('scNote').value.trim();if(!date||isNaN(val)||val<20||val>80){document.getElementById('scMsg').textContent='日付とスコア(20-80)を入力';return}const sub={};['Flu','Pro','Voc','Sen'].forEach(k=>{const v=parseInt(document.getElementById('sc'+k).value);if(!isNaN(v)&&v>=20&&v<=80)sub[k.toLowerCase()]=v});D.exams.push({date,score:val,note,sub});D.exams.sort((a,b)=>a.date.localeCompare(b.date));D.xp+=500;await save();document.getElementById('scMo').classList.remove('show');celebrate('受験記録！','+500 XP');render();renderRM()}
+function renderScores(){const ex=D.exams;if(!ex.length){document.getElementById('chartCard').style.display='none';document.getElementById('examLCard').style.display='none';return}document.getElementById('chartCard').style.display='block';document.getElementById('examLCard').style.display='block';let h='';ex.forEach((e,i)=>{const ph=getPhase(e.date),ht=Math.max(8,((e.score-20)/60)*140),diff=i>0?(e.score-ex[i-1].score):0,ds=diff>0?'+'+diff:diff<0?''+diff:'',dc=diff>0?'var(--p1)':diff<0?'#f46464':'var(--sub)';h+=`<div class="chart-col"><div class="chart-sc">${e.score}</div>${ds?`<div class="chart-diff" style="color:${dc}">${ds}</div>`:''}<div class="chart-bar" style="height:${ht}px;background:${ph.hex}"></div><div class="chart-lbl">${e.date.slice(5)}</div></div>`});document.getElementById('chartBars').innerHTML=h;let lh='';[...ex].reverse().forEach(e=>{let sub='';if(e.sub){const s=e.sub;if(s.flu)sub+=' 流:'+s.flu;if(s.pro)sub+=' 発:'+s.pro;if(s.voc)sub+=' 語:'+s.voc;if(s.sen)sub+=' 構:'+s.sen}lh+=`<div class="exam-item"><div class="exam-top"><div><div class="exam-dt">${e.date}</div>${sub?'<div class="exam-nt" style="color:var(--p2)">'+sub.trim()+'</div>':''}${e.note?'<div class="exam-nt">'+e.note+'</div>':''}</div><div class="exam-sv">${e.score}</div></div></div>`});document.getElementById('examL').innerHTML=lh}
+
+/* Radar */
+function renderRadar(){const exS=D.exams.filter(e=>e.sub&&Object.keys(e.sub).length>=4);if(!exS.length){document.getElementById('radarCard').style.display='none';return}document.getElementById('radarCard').style.display='block';const lat=exS[exS.length-1].sub,prev=exS.length>=2?exS[exS.length-2].sub:null;const lb=['流暢さ','発音','語彙','構文'],ks=['flu','pro','voc','sen'],cx=100,cy=100,mR=75,toR=v=>((v-20)/60)*mR;let svg='';[20,40,60,80].forEach(v=>{svg+=`<circle cx="${cx}" cy="${cy}" r="${toR(v)}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="0.5"/>`});const angs=ks.map((_,i)=>-Math.PI/2+i*(2*Math.PI/4));angs.forEach((a,i)=>{const lx=cx+Math.cos(a)*(mR+14),ly=cy+Math.sin(a)*(mR+14);svg+=`<line x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*mR}" y2="${cy+Math.sin(a)*mR}" stroke="rgba(255,255,255,.1)" stroke-width="0.5"/>`;svg+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" fill="#dde4f0" font-size="10" font-weight="600">${lb[i]}</text>`});if(prev){const pts=ks.map((k,i)=>{const r=toR(prev[k]||20);return`${cx+Math.cos(angs[i])*r},${cy+Math.sin(angs[i])*r}`}).join(' ');svg+=`<polygon points="${pts}" fill="rgba(96,165,250,.08)" stroke="rgba(96,165,250,.3)" stroke-width="1"/>`}const pts=ks.map((k,i)=>{const r=toR(lat[k]||20);return`${cx+Math.cos(angs[i])*r},${cy+Math.sin(angs[i])*r}`}).join(' ');svg+=`<polygon points="${pts}" fill="rgba(74,222,128,.15)" stroke="#4ADE80" stroke-width="1.5"/>`;ks.forEach((k,i)=>{const r=toR(lat[k]||20);svg+=`<circle cx="${cx+Math.cos(angs[i])*r}" cy="${cy+Math.sin(angs[i])*r}" r="3" fill="#4ADE80"/>`});document.getElementById('radarSvg').innerHTML=svg;let leg=ks.map((k,i)=>`${lb[i]}:<b>${lat[k]||'-'}</b>`).join(' ');if(prev){leg+='<br><span style="color:var(--p2)">前回</span> vs <span style="color:var(--p1)">最新</span>';const diffs=ks.map((k,i)=>{const d=(lat[k]||0)-(prev[k]||0);return d>0?lb[i]+'+'+d:d<0?lb[i]+d:null}).filter(Boolean);if(diffs.length)leg+=' '+diffs.join(' ')}document.getElementById('radarLeg').innerHTML=leg}
+
+/* UI */
+function closeMo(o,e){if(e.target===o)o.classList.remove('show')}
+function closeCf(){document.getElementById('cfO').classList.remove('show')}
+function openBkMo(){document.getElementById('bkTa').value=JSON.stringify(D);document.getElementById('bkMsg').textContent='';document.getElementById('bkMo').classList.add('show')}
+async function copyBk(){try{const ta=document.getElementById('bkTa');ta.select();ta.setSelectionRange(0,99999);await navigator.clipboard.writeText(ta.value);document.getElementById('bkMsg').textContent='✅ コピーしました'}catch(e){document.getElementById('bkMsg').textContent='手動でコピーしてください'}}
+function openRsMo(){document.getElementById('rsTa').value='';document.getElementById('rsMsg').textContent='';document.getElementById('rsMo').classList.add('show')}
+async function doRestore(){const t=document.getElementById('rsTa').value.trim();if(!t){document.getElementById('rsMsg').textContent='テキストを貼り付け';return}try{const p=JSON.parse(t);if(!p.days)throw 0;D=validate(p);await save();document.getElementById('rsMo').classList.remove('show');render();renderCal();renderRM();celebrate('復元完了！','')}catch(e){document.getElementById('rsMsg').textContent='無効なデータ'}}
+function rstData(){document.getElementById('cfT').textContent='⚠️ データリセット';document.getElementById('cfM').innerHTML='全データを削除しますか？<br>取り消せません。';document.getElementById('cfOk').textContent='🗑 削除';document.getElementById('cfOk').onclick=async function(){closeCf();D=fresh();await save();render();renderCal();renderRM()};document.getElementById('cfO').classList.add('show')}
+
+/* INIT */
+(async()=>{await load();initCal();render();renderCal();renderRM();document.getElementById('loadO').classList.add('hide');setTimeout(()=>document.getElementById('loadO').style.display='none',500)})();
+</script>
+</body>
+</html>

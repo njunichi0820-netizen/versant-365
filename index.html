@@ -209,6 +209,22 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .rv-sub{font-size:10px;color:var(--sub);margin-top:2px}
 /* Swipe indicator */
 .swipe-hint{text-align:center;font-size:10px;color:var(--sub2);padding:4px 0 0;letter-spacing:1px}
+/* Cloud Sync */
+.sync-b{padding:8px 12px;border:1px solid rgba(96,165,250,.3);border-radius:8px;background:rgba(96,165,250,.08);color:var(--p2);font-size:11px;cursor:pointer;font-family:inherit}
+.sync-mo-inner{display:flex;flex-direction:column;gap:12px}
+.sync-status{text-align:center;font-size:11px;color:var(--sub);padding:6px 0}
+.sync-status.ok{color:var(--p1)}.sync-status.err{color:#f46464}
+.sync-actions{display:flex;gap:10px}
+.sync-actions button{flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.sync-actions button:active{transform:scale(.96)}
+.sync-actions button:disabled{opacity:.4;cursor:default}
+.sync-pat{font-family:monospace;font-size:12px;letter-spacing:.5px}
+.sync-help{font-size:10px;color:var(--sub);line-height:1.5;margin-top:4px}
+.sync-help a{color:var(--p2);text-decoration:underline}
+.sync-divider{border:none;border-top:1px solid var(--border);margin:4px 0}
+.sync-toggle{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--sub)}
+.sync-toggle input{accent-color:var(--p1)}
+.sync-clear{background:none;border:none;color:var(--sub2);font-size:10px;cursor:pointer;text-decoration:underline;padding:0;font-family:inherit}
 </style>
 </head>
 <body style="background:#080c18 !important">
@@ -257,7 +273,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
       <div style="font-size:10px;color:var(--sub2);margin-top:6px">※ P1はSpeak+シャドーイングだけで月4〜5千円からスタート可能</div>
     </div>
   </div>
-  <div class="data-sec"><button class="data-b" onclick="openBkMo()">📤 バックアップ</button><button class="data-b" onclick="openRsMo()">📥 復元</button><button class="data-b dng" onclick="rstData()">🗑 リセット</button></div>
+  <div class="data-sec"><button class="data-b" onclick="openBkMo()">📤 バックアップ</button><button class="data-b" onclick="openRsMo()">📥 復元</button><button class="sync-b" onclick="openSyncMo()">☁️ クラウド同期</button><button class="data-b dng" onclick="rstData()">🗑 リセット</button></div>
 </div>
 
 <!-- TAB 1: MAP -->
@@ -306,6 +322,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 <div class="mo" id="scMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>Versant スコア記録</h3><label>受験日</label><input type="date" id="scDate"><label>総合スコア（20〜80）</label><input type="number" id="scVal" min="20" max="80" placeholder="42"><div class="sub-score-row"><label>流暢さ<input type="number" id="scFlu" min="20" max="80" placeholder="--"></label><label>発音<input type="number" id="scPro" min="20" max="80" placeholder="--"></label></div><div class="sub-score-row"><label>語彙<input type="number" id="scVoc" min="20" max="80" placeholder="--"></label><label>構文<input type="number" id="scSen" min="20" max="80" placeholder="--"></label></div><label>メモ</label><textarea id="scNote" placeholder="感想"></textarea><button class="mo-btn" style="background:var(--p1);color:#080c18" onclick="saveSc()">記録する (+500 XP)</button><div class="mo-msg" id="scMsg"></div></div></div>
 <div class="mo" id="bkMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>📤 バックアップ</h3><p style="font-size:12px;color:var(--sub);text-align:center">テキストをコピーして保存</p><textarea class="bk-ta" id="bkTa" readonly></textarea><button class="mo-btn" style="background:var(--p2)" onclick="copyBk()">📋 コピー</button><div class="mo-msg" id="bkMsg"></div></div></div>
 <div class="mo" id="rsMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>📥 復元</h3><textarea class="bk-ta" id="rsTa" placeholder='貼り付け' style="height:100px"></textarea><button class="mo-btn" style="background:var(--p1);color:#080c18" onclick="doRestore()">復元する</button><div class="mo-msg" id="rsMsg"></div></div></div>
+<div class="mo" id="syncMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>☁️ クラウド同期</h3><div class="sync-mo-inner"><div><label>GitHub Personal Access Token</label><input type="password" class="sync-pat" id="syncPat" placeholder="ghp_xxxxxxxxxxxx"><div class="sync-help">GitHub → Settings → Developer settings → <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener">Personal access tokens</a> で <code>gist</code> スコープのトークンを作成</div></div><div><label>Gist ID（空欄で自動作成）</label><input type="text" class="sync-pat" id="syncGistId" placeholder="自動作成されます"><div class="sync-help">2台目以降は1台目で表示されたGist IDを入力</div></div><button class="mo-btn" style="background:var(--p2)" onclick="saveSync()">💾 設定を保存</button><hr class="sync-divider"><div class="sync-actions"><button onclick="syncUpload()" id="syncUpBtn" disabled>⬆️ アップロード</button><button onclick="syncDownload()" id="syncDlBtn" disabled>⬇️ ダウンロード</button></div><div class="sync-toggle"><label><input type="checkbox" id="syncAuto" onchange="toggleAutoSync()"> 保存時に自動アップロード</label></div><div class="sync-status" id="syncSt"></div><button class="sync-clear" onclick="clearSync()">同期設定をクリア</button></div></div></div>
 <div class="celeb" id="celeb"></div>
 <div class="cf-overlay" id="cfO"><div class="cf-box"><div class="cf-title" id="cfT"></div><div class="cf-msg" id="cfM"></div><div class="cf-btns"><button class="cf-cancel" onclick="closeCf()">キャンセル</button><button class="cf-danger" id="cfOk">削除</button></div></div></div>
 <div class="save-ind" id="saveInd">💾 保存</div>
@@ -364,7 +381,7 @@ let D;const useWS=(typeof window.storage!=='undefined');
 function fresh(){return{days:{},xp:0,streak:0,lastDate:null,exams:[],badges:[],freezes:0,questFlags:[],questComplete:false,missionDone:{},reviewDone:{}}}
 function validate(d){if(!d||typeof d!=='object')return fresh();if(!d.days)d.days={};if(typeof d.xp!=='number')d.xp=0;if(!Array.isArray(d.exams))d.exams=[];if(!Array.isArray(d.badges))d.badges=[];if(typeof d.freezes!=='number')d.freezes=0;if(!Array.isArray(d.questFlags))d.questFlags=[];if(!d.missionDone||typeof d.missionDone!=='object')d.missionDone={};if(!d.reviewDone||typeof d.reviewDone!=='object')d.reviewDone={};return d}
 async function load(){try{if(useWS){const r=await window.storage.get(SK);D=r&&r.value?validate(JSON.parse(r.value)):fresh()}else{const raw=localStorage.getItem(SK);D=raw?validate(JSON.parse(raw)):fresh()}}catch(e){D=fresh()}}
-async function save(){try{const j=JSON.stringify(D);if(useWS)await window.storage.set(SK,j);else localStorage.setItem(SK,j);showSv()}catch(e){}}
+async function save(skipSync){try{const j=JSON.stringify(D);if(useWS)await window.storage.set(SK,j);else localStorage.setItem(SK,j);showSv();if(!skipSync&&localStorage.getItem(SYNC_AUTO_KEY)==='1'&&isSyncReady()){updateGist(getSyncPat(),getSyncGid(),D).catch(()=>{})}}catch(e){}}
 let svT;function showSv(){const el=document.getElementById('saveInd');el.classList.add('show');clearTimeout(svT);svT=setTimeout(()=>el.classList.remove('show'),800)}
 function todayStr(){return fmt(new Date())}
 function fmt(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -710,6 +727,106 @@ async function copyBk(){try{const ta=document.getElementById('bkTa');ta.select()
 function openRsMo(){document.getElementById('rsTa').value='';document.getElementById('rsMsg').textContent='';document.getElementById('rsMo').classList.add('show')}
 async function doRestore(){const t=document.getElementById('rsTa').value.trim();if(!t){document.getElementById('rsMsg').textContent='テキストを貼り付け';return}try{const p=JSON.parse(t);if(!p.days)throw 0;D=validate(p);await save();document.getElementById('rsMo').classList.remove('show');render();renderCal();renderRM();celebrate('復元完了！','')}catch(e){document.getElementById('rsMsg').textContent='無効なデータ'}}
 function rstData(){document.getElementById('cfT').textContent='⚠️ データリセット';document.getElementById('cfM').innerHTML='全データを削除しますか？<br>取り消せません。';document.getElementById('cfOk').textContent='🗑 削除';document.getElementById('cfOk').onclick=async function(){closeCf();D=fresh();await save();render();renderCal();renderRM()};document.getElementById('cfO').classList.add('show')}
+
+/* ══════ CLOUD SYNC ══════ */
+const SYNC_PAT_KEY='v365_sync_pat',SYNC_GID_KEY='v365_sync_gid',SYNC_AUTO_KEY='v365_sync_auto';
+function getSyncPat(){return localStorage.getItem(SYNC_PAT_KEY)||''}
+function getSyncGid(){return localStorage.getItem(SYNC_GID_KEY)||''}
+function isSyncReady(){return !!(getSyncPat()&&getSyncGid())}
+
+function openSyncMo(){
+  document.getElementById('syncPat').value=getSyncPat();
+  document.getElementById('syncGistId').value=getSyncGid();
+  document.getElementById('syncAuto').checked=localStorage.getItem(SYNC_AUTO_KEY)==='1';
+  updateSyncUI();
+  document.getElementById('syncMo').classList.add('show');
+}
+function updateSyncUI(){
+  const ready=isSyncReady();
+  document.getElementById('syncUpBtn').disabled=!ready;
+  document.getElementById('syncDlBtn').disabled=!ready;
+  if(ready)setSyncSt('設定済み（Gist: '+getSyncGid().slice(0,8)+'…）','ok');
+  else setSyncSt('PATとGist IDを設定してください','');
+}
+function setSyncSt(msg,cls){const el=document.getElementById('syncSt');el.textContent=msg;el.className='sync-status'+(cls?' '+cls:'')}
+
+async function saveSync(){
+  const pat=document.getElementById('syncPat').value.trim();
+  if(!pat){setSyncSt('PATを入力してください','err');return}
+  localStorage.setItem(SYNC_PAT_KEY,pat);
+  let gid=document.getElementById('syncGistId').value.trim();
+  if(gid){
+    localStorage.setItem(SYNC_GID_KEY,gid);
+    updateSyncUI();
+    setSyncSt('設定を保存しました','ok');
+  }else{
+    setSyncSt('Gistを作成中…','');
+    try{
+      gid=await createGist(pat);
+      localStorage.setItem(SYNC_GID_KEY,gid);
+      document.getElementById('syncGistId').value=gid;
+      updateSyncUI();
+      setSyncSt('Gistを作成しました: '+gid.slice(0,8)+'…','ok');
+    }catch(e){setSyncSt('Gist作成失敗: '+e.message,'err')}
+  }
+}
+
+async function createGist(pat){
+  const res=await fetch('https://api.github.com/gists',{
+    method:'POST',
+    headers:{'Authorization':'token '+pat,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},
+    body:JSON.stringify({description:'Versant-365 Cloud Sync',public:false,files:{'versant365.json':{content:JSON.stringify(D)}}})
+  });
+  if(!res.ok)throw new Error((await res.json()).message||res.statusText);
+  const data=await res.json();
+  return data.id;
+}
+
+async function updateGist(pat,gid,content){
+  const res=await fetch('https://api.github.com/gists/'+gid,{
+    method:'PATCH',
+    headers:{'Authorization':'token '+pat,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},
+    body:JSON.stringify({files:{'versant365.json':{content:JSON.stringify(content)}}})
+  });
+  if(!res.ok)throw new Error((await res.json()).message||res.statusText);
+}
+
+async function fetchGist(pat,gid){
+  const res=await fetch('https://api.github.com/gists/'+gid,{
+    headers:{'Authorization':'token '+pat,'Accept':'application/vnd.github.v3+json'}
+  });
+  if(!res.ok)throw new Error((await res.json()).message||res.statusText);
+  const data=await res.json();
+  const file=data.files['versant365.json'];
+  if(!file)throw new Error('versant365.json not found in Gist');
+  return JSON.parse(file.content);
+}
+
+async function syncUpload(){
+  if(!isSyncReady())return;
+  setSyncSt('アップロード中…','');
+  try{
+    await updateGist(getSyncPat(),getSyncGid(),D);
+    setSyncSt('アップロード完了 ('+new Date().toLocaleTimeString()+')','ok');
+  }catch(e){setSyncSt('アップロード失敗: '+e.message,'err')}
+}
+
+async function syncDownload(){
+  if(!isSyncReady())return;
+  setSyncSt('ダウンロード中…','');
+  try{
+    const remote=await fetchGist(getSyncPat(),getSyncGid());
+    if(!remote.days)throw new Error('無効なデータ');
+    D=validate(remote);
+    await save(true);
+    render();renderCal();renderRM();
+    setSyncSt('ダウンロード完了 ('+new Date().toLocaleTimeString()+')','ok');
+    celebrate('同期完了！','クラウドからデータを復元しました');
+  }catch(e){setSyncSt('ダウンロード失敗: '+e.message,'err')}
+}
+
+function toggleAutoSync(){localStorage.setItem(SYNC_AUTO_KEY,document.getElementById('syncAuto').checked?'1':'0')}
+function clearSync(){localStorage.removeItem(SYNC_PAT_KEY);localStorage.removeItem(SYNC_GID_KEY);localStorage.removeItem(SYNC_AUTO_KEY);document.getElementById('syncPat').value='';document.getElementById('syncGistId').value='';document.getElementById('syncAuto').checked=false;updateSyncUI();setSyncSt('同期設定をクリアしました','')}
 
 /* INIT */
 (async()=>{await load();initCal();render();renderCal();renderRM();document.getElementById('loadO').classList.add('hide');setTimeout(()=>document.getElementById('loadO').style.display='none',500)})();

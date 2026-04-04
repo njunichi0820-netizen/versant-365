@@ -193,6 +193,21 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 @keyframes ripple{to{transform:scale(4);opacity:0}}
 .mission-tip{margin-top:10px;padding:8px 10px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.15);border-radius:8px;font-size:11px;color:var(--sub);line-height:1.5}
 .mission-tip strong{color:var(--p1)}
+.mission-slot{margin-bottom:12px;padding:12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px}
+.mission-slot.done{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.04)}
+.mission-slot-hd{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.app-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.app-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.04);font-size:11px;font-weight:600;color:var(--text);cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;gap:4px}
+.app-btn:active{transform:scale(.96)}
+.app-btn.selected{border-color:var(--p1);background:rgba(74,222,128,.12);color:var(--p1)}
+.app-btn .app-ic{font-size:14px}
+.time-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.time-row input{width:60px;padding:6px 8px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;text-align:center;font-family:inherit}
+.time-row span{font-size:11px;color:var(--sub)}
+.slot-done-btn{width:100%;padding:10px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;background:rgba(74,222,128,.15);color:var(--p1)}
+.slot-done-btn:active{transform:scale(.97)}
+.slot-done-btn:disabled{opacity:.4;cursor:default}
+.slot-done-mark{text-align:center;font-size:13px;font-weight:700;color:var(--p1);padding:6px 0}
 .mission-allclear{text-align:center;padding:16px 10px;font-size:15px;font-weight:700;color:var(--p1);animation:fadeIn .5s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .review-card{border-color:rgba(96,165,250,.25)}
@@ -281,7 +296,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 
 <!-- TAB 2: CAL -->
 <div class="tp" id="pg2">
-  <div class="card"><div class="card-t">年間進捗 2025.4 → 2026.3</div><div class="yr-bg"><div class="yr-fill" id="yrFill"></div></div><div class="yr-lbl" id="yrLbl"></div></div>
+  <div class="card"><div class="card-t">年間進捗 2026.4 → 2027.3</div><div class="yr-bg"><div class="yr-fill" id="yrFill"></div></div><div class="yr-lbl" id="yrLbl"></div></div>
   <div class="m-nav"><button onclick="chgMo(-1)">◀</button><div class="m-title" id="moTitle"></div><button onclick="chgMo(1)">▶</button></div>
   <div class="m-sub" id="moSub"></div>
   <div class="cal-h"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
@@ -294,15 +309,26 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 <!-- TAB 4: SCORE -->
 <div class="tp" id="pg4">
   <button class="sc-add" onclick="openScMo()">📝 受験スコアを記録（+500 XP）</button>
-  <div class="card" id="radarCard" style="display:none"><div class="card-t">スキルレーダー（最新）</div><div class="radar-wrap"><svg id="radarSvg" viewBox="0 0 200 200"></svg></div><div id="radarLeg" style="text-align:center;font-size:11px;color:var(--sub)"></div></div>
+  <div class="card" id="radarCard" style="display:none"><div class="card-t">Speaking / Listening 比較（最新）</div><div class="radar-wrap"><svg id="radarSvg" viewBox="0 0 200 200"></svg></div><div id="radarLeg" style="text-align:center;font-size:11px;color:var(--sub)"></div></div>
   <div class="card" id="chartCard" style="display:none"><div class="card-t">スコア推移</div><div class="chart-wrap" id="chartBars"></div><div class="sc-refs"><span class="sc-ref">38: 日本人平均</span><span class="sc-ref">43: 第1目標</span><span class="sc-ref">50: ビジネス基礎</span><span class="sc-ref" style="color:var(--p1);border:1px solid rgba(74,222,128,.3)">53-58: 最終目標</span></div></div>
-  <div class="card"><div class="card-t">Versant スコア目安</div>
-    <div class="sg-row"><span class="sg-sc">20〜34</span><span class="sg-lv" style="color:#f46464">初級</span><span class="sg-ds">簡単なやり取りが部分的に可能</span></div>
-    <div class="sg-row"><span class="sg-sc">35〜42</span><span class="sg-lv" style="color:var(--p3)">中級</span><span class="sg-ds">日本人平均38点付近。TOEIC高得点でも多い</span></div>
-    <div class="sg-row"><span class="sg-sc">43〜49</span><span class="sg-lv" style="color:var(--p1)">中級上</span><span class="sg-ds">CEFR B1。ビジネス英語の入門ライン</span></div>
-    <div class="sg-row" style="background:rgba(74,222,128,.05);border-radius:6px;padding:10px 6px"><span class="sg-sc" style="color:var(--p1)">50〜58</span><span class="sg-lv" style="color:var(--p1)">上級</span><span class="sg-ds" style="color:var(--p1)">CEFR B2。飲み会で自然に会話できる目標ゾーン</span></div>
-    <div class="sg-row"><span class="sg-sc">59〜80</span><span class="sg-lv" style="color:var(--p4)">最上級</span><span class="sg-ds">ネイティブに近い流暢さ</span></div>
-    <div style="margin-top:10px;padding:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.15);border-radius:8px;font-size:11px;color:var(--sub);line-height:1.6"><strong style="color:var(--text)">📌 TOEIC740 → Versant 53-58点ロードマップ</strong><br>TOEIC900台でもVersant平均52点。「知識はあるが口から出ない」状態をシャドーイング＋Speak AI英会話の2本柱で打破。<br><strong style="color:var(--p1)">最初の一歩：</strong>Versant1回受験（5,500円）で現在地把握 → Speak 7日間無料体験からスタート</div>
+  <div class="card"><div class="card-t">Versant スコア目安 × CEFR 対応表</div>
+    <div class="sg-row"><span class="sg-sc">20〜25</span><span class="sg-lv" style="color:#f46464">A1</span><span class="sg-ds">ごく基本的な挨拶のみ。聞き取りほぼ不可</span></div>
+    <div class="sg-row"><span class="sg-sc">26〜35</span><span class="sg-lv" style="color:#f46464">A2</span><span class="sg-ds">簡単な定型フレーズを理解。自己紹介が可能</span></div>
+    <div class="sg-row" style="background:rgba(245,158,11,.06);border-radius:6px;padding:10px 6px;border:1px dashed rgba(245,158,11,.3)"><span class="sg-sc" style="color:var(--p3)">36〜39</span><span class="sg-lv" style="color:var(--p3)">A2+</span><span class="sg-ds" style="color:var(--p3)">📍現在地（39点）日本人平均38点付近。短い文なら聞き取れるが、会話の流れについていけない。言いたいことが英語で出てこない</span></div>
+    <div class="sg-row"><span class="sg-sc">40〜42</span><span class="sg-lv" style="color:var(--p3)">A2+→B1</span><span class="sg-ds">身近な話題でゆっくりなら会話可能。質問への応答が少し速くなる。シャドーイングの効果が出始める段階</span></div>
+    <div class="sg-row" style="background:rgba(74,222,128,.04);border-radius:6px;padding:10px 6px"><span class="sg-sc" style="color:var(--p1)">43〜46</span><span class="sg-lv" style="color:var(--p1)">B1</span><span class="sg-ds" style="color:var(--p1)">ビジネス英語の入門ライン。日常会話がある程度スムーズに。旅行先で困らない。会議で簡単な発言ができる</span></div>
+    <div class="sg-row"><span class="sg-sc">47〜49</span><span class="sg-lv" style="color:var(--p1)">B1+</span><span class="sg-ds">意見を述べたり理由を説明できる。電話対応が一人でできるようになる。ネイティブとの1対1会話が成立</span></div>
+    <div class="sg-row" style="background:rgba(74,222,128,.08);border-radius:6px;padding:10px 6px;border:1px solid rgba(74,222,128,.2)"><span class="sg-sc" style="color:var(--p1);font-size:16px">50〜55</span><span class="sg-lv" style="color:var(--p1)">B2</span><span class="sg-ds" style="color:var(--p1)">🎯 目標ゾーン。飲み会で自然に会話。複雑な議論に参加可能。プレゼンができる。TOEIC900台の実力が「口」に出る</span></div>
+    <div class="sg-row"><span class="sg-sc">56〜62</span><span class="sg-lv" style="color:var(--p4)">B2+</span><span class="sg-ds">幅広い話題で流暢に議論。微妙なニュアンスも表現可能。海外赴任で通用するレベル</span></div>
+    <div class="sg-row"><span class="sg-sc">63〜79</span><span class="sg-lv" style="color:var(--p4)">C1〜C2</span><span class="sg-ds">ネイティブに近い流暢さ。専門的な議論も自在に対応</span></div>
+    <div style="margin-top:12px;padding:12px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:11px;color:var(--sub);line-height:1.8">
+      <strong style="color:var(--text)">📍 39点(A2+) → 53点(B2) ステップアップの道のり</strong><br>
+      <span style="color:var(--p3)">+4点(→43) 約2〜3ヶ月：</span>シャドーイングで「音→口」の回路が繋がる。短文リピートが正確に<br>
+      <span style="color:var(--p1)">+8点(→47) 約4〜6ヶ月：</span>Speakで瞬発力UP。考えなくても短い返答が出る状態<br>
+      <span style="color:var(--p1)">+11点(→50) 約6〜9ヶ月：</span>Cambly等でネイティブ実戦。自分の意見を英語で組み立てられる<br>
+      <span style="color:var(--p1);font-weight:700">+14点(→53) 約9〜12ヶ月：</span>総合力完成。飲み会で「英語話せるね」と言われるレベル
+    </div>
+    <div style="margin-top:8px;padding:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.15);border-radius:8px;font-size:11px;color:var(--sub);line-height:1.6"><strong style="color:var(--text)">💡 スコアUPのコツ</strong><br>Versantは<strong style="color:var(--text)">「Speaking力」</strong>を直接測定。TOEICと違い「知っている」だけでは上がらない。<br>毎日15分のシャドーイング＋AI英会話の継続が最も効果的。1日でも多く口を動かすことが鍵。</div>
   </div>
   <div class="card" id="examLCard" style="display:none"><div class="card-t">受験履歴</div><div class="exam-list" id="examL"></div></div>
 </div>
@@ -319,7 +345,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 </div>
 
 <div class="mo" id="sessMo" onclick="closeMo(this,event)"><div class="mo-in"><h3 id="smT"></h3><div id="smD" style="text-align:center;font-size:13px;color:var(--sub);margin-bottom:10px"></div><div id="smB" style="text-align:center"></div></div></div>
-<div class="mo" id="scMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>Versant スコア記録</h3><label>受験日</label><input type="date" id="scDate"><label>総合スコア（20〜80）</label><input type="number" id="scVal" min="20" max="80" placeholder="42"><div class="sub-score-row"><label>流暢さ<input type="number" id="scFlu" min="20" max="80" placeholder="--"></label><label>発音<input type="number" id="scPro" min="20" max="80" placeholder="--"></label></div><div class="sub-score-row"><label>語彙<input type="number" id="scVoc" min="20" max="80" placeholder="--"></label><label>構文<input type="number" id="scSen" min="20" max="80" placeholder="--"></label></div><label>メモ</label><textarea id="scNote" placeholder="感想"></textarea><button class="mo-btn" style="background:var(--p1);color:#080c18" onclick="saveSc()">記録する (+500 XP)</button><div class="mo-msg" id="scMsg"></div></div></div>
+<div class="mo" id="scMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>Versant スコア記録</h3><label>受験日</label><input type="date" id="scDate"><label>総合スコア（20〜80）</label><input type="number" id="scVal" min="20" max="80" placeholder="42"><div class="sub-score-row"><label>Speaking<input type="number" id="scSpk" min="20" max="80" placeholder="--"></label><label>Listening<input type="number" id="scLis" min="20" max="80" placeholder="--"></label></div><label>メモ</label><textarea id="scNote" placeholder="感想"></textarea><button class="mo-btn" style="background:var(--p1);color:#080c18" onclick="saveSc()">記録する (+500 XP)</button><div class="mo-msg" id="scMsg"></div></div></div>
 <div class="mo" id="bkMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>📤 バックアップ</h3><p style="font-size:12px;color:var(--sub);text-align:center">テキストをコピーして保存</p><textarea class="bk-ta" id="bkTa" readonly></textarea><button class="mo-btn" style="background:var(--p2)" onclick="copyBk()">📋 コピー</button><div class="mo-msg" id="bkMsg"></div></div></div>
 <div class="mo" id="rsMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>📥 復元</h3><textarea class="bk-ta" id="rsTa" placeholder='貼り付け' style="height:100px"></textarea><button class="mo-btn" style="background:var(--p1);color:#080c18" onclick="doRestore()">復元する</button><div class="mo-msg" id="rsMsg"></div></div></div>
 <div class="mo" id="syncMo" onclick="closeMo(this,event)"><div class="mo-in"><h3>☁️ クラウド同期</h3><div class="sync-mo-inner"><div><label>GitHub Personal Access Token</label><input type="password" class="sync-pat" id="syncPat" placeholder="ghp_xxxxxxxxxxxx"><div class="sync-help">GitHub → Settings → Developer settings → <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener">Personal access tokens</a> で <code>gist</code> スコープのトークンを作成</div></div><div><label>Gist ID（空欄で自動作成）</label><input type="text" class="sync-pat" id="syncGistId" placeholder="自動作成されます"><div class="sync-help">2台目以降は1台目で表示されたGist IDを入力</div></div><button class="mo-btn" style="background:var(--p2)" onclick="saveSync()">💾 設定を保存</button><hr class="sync-divider"><div class="sync-actions"><button onclick="syncUpload()" id="syncUpBtn" disabled>⬆️ アップロード</button><button onclick="syncDownload()" id="syncDlBtn" disabled>⬇️ ダウンロード</button></div><div class="sync-toggle"><label><input type="checkbox" id="syncAuto" onchange="toggleAutoSync()"> 保存時に自動アップロード</label></div><div class="sync-status" id="syncSt"></div><button class="sync-clear" onclick="clearSync()">同期設定をクリア</button></div></div></div>
@@ -330,7 +356,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 <script>
 /* ══════ CONFIG ══════ */
 const SK='v365_data',TAB_COUNT=5;
-const START=new Date(2025,3,1),END=new Date(2026,2,31);
+const START=new Date(2026,3,1),END=new Date(2027,2,31);
 const PHASES=[
   {id:1,m:[3,4,5],name:'Phase 1',period:'4〜6月',theme:'耳と口の回路構築',hex:'#4ADE80',am:'シャドーイング（停車中・声出し）',pm:'Speak AI英会話フリートーク',tools:'Speak(7日無料体験あり), シャドーイングアプリ',cost:'Speak年額1.3〜3万 + シャドーイングアプリ月3千円台 ≒ 月4〜5千円'},
   {id:2,m:[6,7,8],name:'Phase 2',period:'7〜9月',theme:'アウトプット瞬発力',hex:'#60A5FA',am:'Speak 瞬間英作文モード',pm:'Podcast聴き流し（運転中）',tools:'Speak, English News系Podcast(無料)',cost:'Speak継続のみ ≒ 月1〜3千円'},
@@ -338,8 +364,8 @@ const PHASES=[
   {id:4,m:[0,1,2],name:'Phase 4',period:'1〜3月',theme:'総仕上げ・飲み会英語',hex:'#F472B6',am:'Cambly カジュアル会話練習',pm:'VERSANT模擬+弱点パート復習',tools:'Cambly, Speak, VERSANT公式アプリ',cost:'Cambly+Speak ≒ 月1.5〜2万円'}
 ];
 const LEVELS=[{xp:0,name:'🌱 英語見習い'},{xp:300,name:'🎧 シャドーイング入門'},{xp:900,name:'🗣️ Speak実践中'},{xp:2000,name:'🔥 Cambly挑戦者'},{xp:4000,name:'👑 飲み会マスター'}];
-const BOSS=[{date:'2025-04-03',name:'Versant ①',desc:'4/3 — 初受験！現在地把握'},{date:'2025-09-30',name:'Versant ②',desc:'9月末 — 成長確認（目標43+）'},{date:'2025-12-31',name:'Versant ③',desc:'12月末 — 50点突破を狙う'},{date:'2026-03-31',name:'Versant ④',desc:'3月末 — 最終目標53〜58点'}];
-const EXAM_DATES=['2025-04-03','2025-09-30','2025-12-31','2026-03-31'];
+const BOSS=[{date:'2026-07-01',name:'Versant ①',desc:'7月 — 成長確認（目標43+）'},{date:'2026-09-30',name:'Versant ②',desc:'9月末 — 中間チェック（目標47+）'},{date:'2026-12-31',name:'Versant ③',desc:'12月末 — 50点突破を狙う'},{date:'2027-03-31',name:'Versant ④',desc:'3月末 — 最終目標53〜58点'}];
+const EXAM_DATES=['2026-07-01','2026-09-30','2026-12-31','2027-03-31'];
 const BADGES=[
   {id:'first',icon:'🌅',name:'はじめの一歩',cond:'最初のセッション完了'},{id:'s3',icon:'🔥',name:'3日の炎',cond:'3日連続学習'},{id:'s7',icon:'⚡',name:'一週間の戦士',cond:'7日連続'},{id:'s30',icon:'🏆',name:'鉄の意志',cond:'30日連続'},
   {id:'d10',icon:'📗',name:'10日到達',cond:'累計10日'},{id:'d50',icon:'📘',name:'50日到達',cond:'累計50日'},{id:'d100',icon:'📕',name:'100日到達',cond:'累計100日'},{id:'d200',icon:'🌈',name:'200日到達',cond:'累計200日'},
@@ -355,13 +381,21 @@ const QUESTS=[
   {id:'q6',desc:'フリーズ券を購入',check:D=>(D.freezes||0)>0||D.questFlags?.includes('freeze_bought'),xp:50},
   {id:'q7',desc:'7日連続達成！',check:D=>D.streak>=7,xp:200}
 ];
+const MISSION_APPS=[
+  {id:'speak',name:'Speak',icon:'🗣️',desc:'AI英会話フリートーク'},
+  {id:'versant',name:'Versant公式',icon:'📱',desc:'公式アプリで模擬練習'},
+  {id:'elsa',name:'ELSA Speak',icon:'🎯',desc:'発音矯正AI'},
+  {id:'shadow',name:'シャドーイング',icon:'🎧',desc:'音声リピート練習'},
+  {id:'cambly',name:'Cambly',icon:'🌍',desc:'ネイティブ講師レッスン'},
+  {id:'podcast',name:'Podcast',icon:'📻',desc:'英語リスニング'},
+  {id:'other',name:'その他',icon:'📝',desc:'自由学習'}
+];
+
 function dynMsg(){
   const h=new Date().getHours(),s=D.streak,td=totalDays(),ph=getCurPhase(),pool=[];
   // Versant countdown
-  const examDate=new Date(2025,3,3),now=new Date();now.setHours(0,0,0,0);
-  const daysUntil=Math.ceil((examDate-now)/864e5);
-  if(daysUntil>0&&daysUntil<=7)pool.push(`Versant受験まであと${daysUntil}日！準備は順調！`);
-  if(daysUntil===0)pool.push('今日がVersant本番！落ち着いて実力を出そう！');
+  const nextExam=EXAM_DATES.map(d=>parseDD(d)).find(d=>d>=new Date());
+  if(nextExam){const now2=new Date();now2.setHours(0,0,0,0);const du=Math.ceil((nextExam-now2)/864e5);if(du>0&&du<=14)pool.push(`次のVersant受験まであと${du}日！`);if(du===0)pool.push('今日がVersant本番！落ち着いて実力を出そう！');}
   if(h<12)pool.push('朝のシャドーイングは記憶定着率UP！','通勤前の一声が1日を変える！');
   else pool.push('お疲れ様！今日もやり切った！','夕方の復習で脳に刻む！');
   if(s>=1&&s<7)pool.push(`あと${7-s}日で1週間連続！`);
@@ -394,7 +428,7 @@ function calcStreak(){let s=0,d=new Date();d.setHours(0,0,0,0);if(D.days[todaySt
 function elapsed(){const n=new Date();n.setHours(0,0,0,0);return Math.max(0,Math.floor((n-START)/864e5)+1)}
 function totalDays(){return Object.keys(D.days).length}
 function yrStudy(){let c=0;for(const k in D.days){const d=parseDD(k);if(d>=START&&d<=END)c++}return c}
-function checkBadges(){const b=D.badges,a=id=>{if(!b.includes(id))b.push(id)},td=totalDays();if(td>0)a('first');if(D.streak>=3)a('s3');if(D.streak>=7)a('s7');if(D.streak>=30)a('s30');if(td>=10)a('d10');if(td>=50)a('d50');if(td>=100)a('d100');if(td>=200)a('d200');if(D.xp>=500)a('xp500');if(D.xp>=2000)a('xp2000');if(D.xp>=5000)a('xp5000');if(D.exams.length>0)a('exam1');if(D.exams.length>=4)a('exam4');if(D.exams.length>=2){const sorted=[...D.exams].sort((x,y)=>x.date.localeCompare(y.date));for(let i=1;i<sorted.length;i++){if(sorted[i].score>sorted[i-1].score){a('scoreup');break}}}const ts=todayStr();if(D.days[ts]&&D.days[ts].m&&D.days[ts].e)a('ampm');if(new Date()>=new Date(2025,5,30)){let ok=true;for(let dd=new Date(2025,3,1);dd<=new Date(2025,5,30);dd.setDate(dd.getDate()+1)){if(!D.days[fmt(dd)]){ok=false;break}}if(ok)a('p1clear')}}
+function checkBadges(){const b=D.badges,a=id=>{if(!b.includes(id))b.push(id)},td=totalDays();if(td>0)a('first');if(D.streak>=3)a('s3');if(D.streak>=7)a('s7');if(D.streak>=30)a('s30');if(td>=10)a('d10');if(td>=50)a('d50');if(td>=100)a('d100');if(td>=200)a('d200');if(D.xp>=500)a('xp500');if(D.xp>=2000)a('xp2000');if(D.xp>=5000)a('xp5000');if(D.exams.length>0)a('exam1');if(D.exams.length>=4)a('exam4');if(D.exams.length>=2){const sorted=[...D.exams].sort((x,y)=>x.date.localeCompare(y.date));for(let i=1;i<sorted.length;i++){if(sorted[i].score>sorted[i-1].score){a('scoreup');break}}}const ts=todayStr();if(D.days[ts]&&D.days[ts].m&&D.days[ts].e)a('ampm');if(new Date()>=new Date(2026,5,30)){let ok=true;for(let dd=new Date(2026,3,1);dd<=new Date(2026,5,30);dd.setDate(dd.getDate()+1)){if(!D.days[fmt(dd)]){ok=false;break}}if(ok)a('p1clear')}}
 function celebrate(m,s){const el=document.getElementById('celeb');const em=['⭐','✨','💫','🎊','⭐','✨','💫','🎊'];let h='<div class="msg"><div class="msg-m">🎉 '+m+'</div><div class="msg-s">'+s+'</div></div>';em.forEach((e,i)=>{const a=(i/8)*360,r=a*Math.PI/180,d=80+Math.random()*40;h+=`<span class="emo" style="--tx:${Math.cos(r)*d}px;--ty:${Math.sin(r)*d}px;animation-delay:${i*50}ms">${e}</span>`});el.innerHTML=h;el.classList.add('show');setTimeout(()=>{el.classList.remove('show');el.innerHTML=''},2400)}
 async function buyFreeze(){if(D.xp<200)return;D.xp-=200;D.freezes++;if(!D.questFlags.includes('freeze_bought'))D.questFlags.push('freeze_bought');await save();celebrate('フリーズ券GET！','保護+1枚');render()}
 
@@ -514,32 +548,69 @@ async function toggleReview(key,e){
   renderMission();render();
 }
 
+function selectApp(slot,appId){
+  const today=todayStr();
+  const key=today+'_'+slot+'_app';
+  D.missionDone[key]=D.missionDone[key]===appId?'':appId;
+  save();renderMission();
+}
+function setMissionMin(slot,val){
+  const today=todayStr();
+  D.missionDone[today+'_'+slot+'_min']=val;
+  save();
+}
+async function completeSlot(slot,e){
+  const today=todayStr();
+  const appKey=today+'_'+slot+'_app';
+  if(!D.missionDone[appKey])return;
+  const key=getMissionKey(today,slot);
+  if(D.missionDone[key])return;
+  D.missionDone[key]=true;
+  D.xp+=30;
+  if(!D.days[today])D.days[today]={m:false,e:false};
+  if(slot==='am'){D.days[today].m=true;D.lastDate=today}
+  if(slot==='pm'){D.days[today].e=true;D.lastDate=today}
+  await save();
+  const msg=dynMsg();
+  celebrate('完了！',msg+' (+30 XP)');
+  renderMission();render();
+}
+
 function renderMission(){
   const today=todayStr();
   const mission=DAILY_PLAN.find(p=>p.date===today);
   const el=document.getElementById('missionCard');
-  const examDate=new Date(2025,3,3);
-  const now=new Date();now.setHours(0,0,0,0);
-  const daysUntil=Math.ceil((examDate-now)/864e5);
 
-  // === Post-exam: Phase-based AM/PM tasks ===
-  if(!mission&&daysUntil<0){
+  // === Phase-based AM/PM tasks with app selection & time ===
+  if(!mission){
     const ph=getCurPhase();
     const dAm=isTaskDone(today,'am'),dPm=isTaskDone(today,'pm');
     const done=(dAm?1:0)+(dPm?1:0),pct=Math.round(done/2*100);
+    const amApp=D.missionDone[today+'_am_app']||'';
+    const pmApp=D.missionDone[today+'_pm_app']||'';
+    const amMin=D.missionDone[today+'_am_min']||'';
+    const pmMin=D.missionDone[today+'_pm_min']||'';
     el.style.display='block';
+
+    const renderAppGrid=(slot,selApp,isDone)=>{
+      return MISSION_APPS.map(a=>`<button class="app-btn${selApp===a.id?' selected':''}" onclick="selectApp('${slot}','${a.id}')" ${isDone?'disabled':''}><span class="app-ic">${a.icon}</span>${a.name}</button>`).join('');
+    };
+
+    const renderSlot=(slot,icon,label,rec,isDone,selApp,mins)=>{
+      if(isDone) return `<div class="mission-slot done"><div class="mission-slot-hd">${icon} ${label}</div><div class="slot-done-mark">✅ 完了 — ${MISSION_APPS.find(a=>a.id===selApp)?.name||'学習'}${mins?' ('+mins+'分)':''}</div></div>`;
+      return `<div class="mission-slot"><div class="mission-slot-hd">${icon} ${label}<span style="font-size:10px;color:var(--sub);font-weight:400">${rec}</span></div>
+        <div class="app-grid">${renderAppGrid(slot,selApp,false)}</div>
+        <div class="time-row"><span>⏱</span><input type="number" id="${slot}Min" min="1" max="180" placeholder="15" value="${mins}" onchange="setMissionMin('${slot}',this.value)"><span>分</span></div>
+        <button class="slot-done-btn" onclick="completeSlot('${slot}',event)" ${selApp?'':'disabled'}>完了する (+30 XP)</button>
+      </div>`;
+    };
+
     el.innerHTML=`<div class="mission-header"><div class="mission-date">📋 今日のミッション</div><div class="mission-countdown" style="background:rgba(74,222,128,.1);color:var(--p1)">${done}/2</div></div>
-      <div style="font-size:11px;color:var(--sub);margin-bottom:8px">${ph.name} — ${ph.theme}</div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:10px">${ph.name} — ${ph.theme}</div>
       <div class="mission-prog"><div class="mission-prog-bar"><div class="mission-prog-fill" style="width:${pct}%"></div></div><div class="mission-prog-text">${pct}%</div></div>
       ${done>=2?'<div class="mission-allclear">🎊 朝夕コンプリート！</div>':''}
-      <div class="mt ${dAm?'done':''}" onclick="toggleTask('${today}','am',event)">
-        <div class="mt-check">${dAm?'✓':''}</div>
-        <div class="mt-body"><div class="mt-main">🌅 朝：${ph.am}</div><div class="mt-sub">停車中・声出し 15〜20分</div><div class="mt-xp">+30 XP</div></div>
-      </div>
-      <div class="mt ${dPm?'done':''}" onclick="toggleTask('${today}','pm',event)">
-        <div class="mt-check">${dPm?'✓':''}</div>
-        <div class="mt-body"><div class="mt-main">🌙 夕：${ph.pm}</div><div class="mt-sub">通勤中 15〜20分</div><div class="mt-xp">+30 XP</div></div>
-      </div>
+      ${renderSlot('am','🌅','朝セッション','おすすめ：'+ph.am,dAm,amApp,amMin)}
+      ${renderSlot('pm','🌙','夕セッション','おすすめ：'+ph.pm,dPm,pmApp,pmMin)}
       <div class="mission-tip"><strong>💡 アクティブリコール：</strong>昨日学んだ内容を、テキストを見ずに思い出してから今日の学習を開始しよう</div>`;
     // All-clear bonus
     if(done>=2&&!D.missionDone[today+'_allclear']){
@@ -549,14 +620,6 @@ function renderMission(){
     renderReviewCard();return;
   }
 
-  // === Pre-exam gap day ===
-  if(!mission){
-    if(daysUntil>0){
-      el.innerHTML=`<div class="mission-header"><div class="mission-date">📋 Versant受験準備</div><div class="mission-countdown">あと${daysUntil}日</div></div>
-        <div class="mission-tip"><strong>💡 今日のヒント：</strong>YouTubeで「Versant test sample」を検索して形式を把握しよう</div>`;
-    }else{el.style.display='none'}
-    renderReviewCard();return;
-  }
 
   // === Planned daily mission (3/28〜4/3) ===
   el.style.display='block';
@@ -567,8 +630,8 @@ function renderMission(){
   const allDone=doneCount>=total;
 
   let countdownHtml='';
-  if(daysUntil>0)countdownHtml=`<div class="mission-countdown">受験まであと${daysUntil}日</div>`;
-  else if(daysUntil===0)countdownHtml=`<div class="mission-countdown" style="background:rgba(244,114,182,.15);color:var(--p4)">🎯 今日が本番！</div>`;
+  const nextEx=EXAM_DATES.map(d=>parseDD(d)).find(d=>{const n=new Date();n.setHours(0,0,0,0);return d>=n});
+  if(nextEx){const n=new Date();n.setHours(0,0,0,0);const du=Math.ceil((nextEx-n)/864e5);if(du>0&&du<=14)countdownHtml=`<div class="mission-countdown">受験まであと${du}日</div>`;else if(du===0)countdownHtml=`<div class="mission-countdown" style="background:rgba(244,114,182,.15);color:var(--p4)">🎯 今日が本番！</div>`;}
 
   let tasksHtml='';
   tasks.forEach((t,i)=>{
@@ -690,7 +753,7 @@ function renderRM(){const cur=getCurPhase(),ci=PHASES.indexOf(cur);let h='';PHAS
 /* Calendar */
 let cMo,cYr;
 function initCal(){const n=new Date();cMo=n.getMonth();cYr=n.getFullYear();clampMo()}
-function clampMo(){if(cYr<2025||(cYr===2025&&cMo<3)){cYr=2025;cMo=3}if(cYr>2026||(cYr===2026&&cMo>2)){cYr=2026;cMo=2}}
+function clampMo(){if(cYr<2026||(cYr===2026&&cMo<3)){cYr=2026;cMo=3}if(cYr>2027||(cYr===2027&&cMo>2)){cYr=2027;cMo=2}}
 function chgMo(d){cMo+=d;if(cMo>11){cMo=0;cYr++}if(cMo<0){cMo=11;cYr--}clampMo();renderCal()}
 function renderCal(){
   const now=new Date();now.setHours(0,0,0,0);const ph=getPhase(new Date(cYr,cMo,1)),ic=(cMo===now.getMonth()&&cYr===now.getFullYear());
@@ -712,12 +775,12 @@ async function recDaySess(ds,t){const now=new Date();now.setHours(0,0,0,0);if(pa
 function renderBadges(){let h='';BADGES.forEach(b=>{const e=D.badges.includes(b.id);h+=`<div class="badge-i ${e?'earned':'locked'}"><div class="badge-ic">${b.icon}</div><div class="badge-n">${b.name}</div><div class="badge-c">${b.cond}</div>${e?'<div class="badge-s">✓</div>':''}</div>`});document.getElementById('badgeG').innerHTML=h}
 
 /* Score */
-function openScMo(){document.getElementById('scDate').value=todayStr();['scVal','scFlu','scPro','scVoc','scSen','scNote'].forEach(id=>document.getElementById(id).value='');document.getElementById('scMsg').textContent='';document.getElementById('scMo').classList.add('show')}
-async function saveSc(){const date=document.getElementById('scDate').value,val=parseInt(document.getElementById('scVal').value),note=document.getElementById('scNote').value.trim();if(!date||isNaN(val)||val<20||val>80){document.getElementById('scMsg').textContent='日付とスコア(20-80)を入力';return}const sub={};['Flu','Pro','Voc','Sen'].forEach(k=>{const v=parseInt(document.getElementById('sc'+k).value);if(!isNaN(v)&&v>=20&&v<=80)sub[k.toLowerCase()]=v});D.exams.push({date,score:val,note,sub});D.exams.sort((a,b)=>a.date.localeCompare(b.date));D.xp+=500;await save();document.getElementById('scMo').classList.remove('show');celebrate('受験記録！','+500 XP');render();renderRM()}
-function renderScores(){const ex=D.exams;if(!ex.length){document.getElementById('chartCard').style.display='none';document.getElementById('examLCard').style.display='none';return}document.getElementById('chartCard').style.display='block';document.getElementById('examLCard').style.display='block';let h='';ex.forEach((e,i)=>{const ph=getPhase(e.date),ht=Math.max(8,((e.score-20)/60)*140),diff=i>0?(e.score-ex[i-1].score):0,ds=diff>0?'+'+diff:diff<0?''+diff:'',dc=diff>0?'var(--p1)':diff<0?'#f46464':'var(--sub)';h+=`<div class="chart-col"><div class="chart-sc">${e.score}</div>${ds?`<div class="chart-diff" style="color:${dc}">${ds}</div>`:''}<div class="chart-bar" style="height:${ht}px;background:${ph.hex}"></div><div class="chart-lbl">${e.date.slice(5)}</div></div>`});document.getElementById('chartBars').innerHTML=h;let lh='';[...ex].reverse().forEach(e=>{let sub='';if(e.sub){const s=e.sub;if(s.flu)sub+=' 流:'+s.flu;if(s.pro)sub+=' 発:'+s.pro;if(s.voc)sub+=' 語:'+s.voc;if(s.sen)sub+=' 構:'+s.sen}lh+=`<div class="exam-item"><div class="exam-top"><div><div class="exam-dt">${e.date}</div>${sub?'<div class="exam-nt" style="color:var(--p2)">'+sub.trim()+'</div>':''}${e.note?'<div class="exam-nt">'+e.note+'</div>':''}</div><div class="exam-sv">${e.score}</div></div></div>`});document.getElementById('examL').innerHTML=lh}
+function openScMo(){document.getElementById('scDate').value=todayStr();['scVal','scSpk','scLis','scNote'].forEach(id=>document.getElementById(id).value='');document.getElementById('scMsg').textContent='';document.getElementById('scMo').classList.add('show')}
+async function saveSc(){const date=document.getElementById('scDate').value,val=parseInt(document.getElementById('scVal').value),note=document.getElementById('scNote').value.trim();if(!date||isNaN(val)||val<20||val>80){document.getElementById('scMsg').textContent='日付とスコア(20-80)を入力';return}const sub={};['Spk','Lis'].forEach(k=>{const v=parseInt(document.getElementById('sc'+k).value);if(!isNaN(v)&&v>=20&&v<=80)sub[k.toLowerCase()]=v});D.exams.push({date,score:val,note,sub});D.exams.sort((a,b)=>a.date.localeCompare(b.date));D.xp+=500;await save();document.getElementById('scMo').classList.remove('show');celebrate('受験記録！','+500 XP');render();renderRM()}
+function renderScores(){const ex=D.exams;if(!ex.length){document.getElementById('chartCard').style.display='none';document.getElementById('examLCard').style.display='none';return}document.getElementById('chartCard').style.display='block';document.getElementById('examLCard').style.display='block';let h='';ex.forEach((e,i)=>{const ph=getPhase(e.date),ht=Math.max(8,((e.score-20)/60)*140),diff=i>0?(e.score-ex[i-1].score):0,ds=diff>0?'+'+diff:diff<0?''+diff:'',dc=diff>0?'var(--p1)':diff<0?'#f46464':'var(--sub)';h+=`<div class="chart-col"><div class="chart-sc">${e.score}</div>${ds?`<div class="chart-diff" style="color:${dc}">${ds}</div>`:''}<div class="chart-bar" style="height:${ht}px;background:${ph.hex}"></div><div class="chart-lbl">${e.date.slice(5)}</div></div>`});document.getElementById('chartBars').innerHTML=h;let lh='';[...ex].reverse().forEach(e=>{let sub='';if(e.sub){const s=e.sub;if(s.spk)sub+=' Speaking:'+s.spk;if(s.lis)sub+=' Listening:'+s.lis;if(s.flu)sub+=' 流:'+s.flu;if(s.pro)sub+=' 発:'+s.pro;if(s.voc)sub+=' 語:'+s.voc;if(s.sen)sub+=' 構:'+s.sen}lh+=`<div class="exam-item"><div class="exam-top"><div><div class="exam-dt">${e.date}</div>${sub?'<div class="exam-nt" style="color:var(--p2)">'+sub.trim()+'</div>':''}${e.note?'<div class="exam-nt">'+e.note+'</div>':''}</div><div class="exam-sv">${e.score}</div></div></div>`});document.getElementById('examL').innerHTML=lh}
 
 /* Radar */
-function renderRadar(){const exS=D.exams.filter(e=>e.sub&&Object.keys(e.sub).length>=4);if(!exS.length){document.getElementById('radarCard').style.display='none';return}document.getElementById('radarCard').style.display='block';const lat=exS[exS.length-1].sub,prev=exS.length>=2?exS[exS.length-2].sub:null;const lb=['流暢さ','発音','語彙','構文'],ks=['flu','pro','voc','sen'],cx=100,cy=100,mR=75,toR=v=>((v-20)/60)*mR;let svg='';[20,40,60,80].forEach(v=>{svg+=`<circle cx="${cx}" cy="${cy}" r="${toR(v)}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="0.5"/>`});const angs=ks.map((_,i)=>-Math.PI/2+i*(2*Math.PI/4));angs.forEach((a,i)=>{const lx=cx+Math.cos(a)*(mR+14),ly=cy+Math.sin(a)*(mR+14);svg+=`<line x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*mR}" y2="${cy+Math.sin(a)*mR}" stroke="rgba(255,255,255,.1)" stroke-width="0.5"/>`;svg+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" fill="#dde4f0" font-size="10" font-weight="600">${lb[i]}</text>`});if(prev){const pts=ks.map((k,i)=>{const r=toR(prev[k]||20);return`${cx+Math.cos(angs[i])*r},${cy+Math.sin(angs[i])*r}`}).join(' ');svg+=`<polygon points="${pts}" fill="rgba(96,165,250,.08)" stroke="rgba(96,165,250,.3)" stroke-width="1"/>`}const pts=ks.map((k,i)=>{const r=toR(lat[k]||20);return`${cx+Math.cos(angs[i])*r},${cy+Math.sin(angs[i])*r}`}).join(' ');svg+=`<polygon points="${pts}" fill="rgba(74,222,128,.15)" stroke="#4ADE80" stroke-width="1.5"/>`;ks.forEach((k,i)=>{const r=toR(lat[k]||20);svg+=`<circle cx="${cx+Math.cos(angs[i])*r}" cy="${cy+Math.sin(angs[i])*r}" r="3" fill="#4ADE80"/>`});document.getElementById('radarSvg').innerHTML=svg;let leg=ks.map((k,i)=>`${lb[i]}:<b>${lat[k]||'-'}</b>`).join(' ');if(prev){leg+='<br><span style="color:var(--p2)">前回</span> vs <span style="color:var(--p1)">最新</span>';const diffs=ks.map((k,i)=>{const d=(lat[k]||0)-(prev[k]||0);return d>0?lb[i]+'+'+d:d<0?lb[i]+d:null}).filter(Boolean);if(diffs.length)leg+=' '+diffs.join(' ')}document.getElementById('radarLeg').innerHTML=leg}
+function renderRadar(){const exS=D.exams.filter(e=>e.sub&&(e.sub.spk||e.sub.lis));if(!exS.length){document.getElementById('radarCard').style.display='none';return}document.getElementById('radarCard').style.display='block';const lat=exS[exS.length-1].sub,prev=exS.length>=2?exS[exS.length-2].sub:null;const lb=['Speaking','Listening'],ks=['spk','lis'],cx=100,cy=100,mR=75,toR=v=>((v-20)/60)*mR;let svg='';[20,40,60,80].forEach(v=>{svg+=`<circle cx="${cx}" cy="${cy}" r="${toR(v)}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="0.5"/>`});const angs=ks.map((_,i)=>-Math.PI/2+i*Math.PI);angs.forEach((a,i)=>{const lx=cx+Math.cos(a)*(mR+14),ly=cy+Math.sin(a)*(mR+14);svg+=`<line x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*mR}" y2="${cy+Math.sin(a)*mR}" stroke="rgba(255,255,255,.1)" stroke-width="0.5"/>`;svg+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" fill="#dde4f0" font-size="10" font-weight="600">${lb[i]}</text>`});if(prev){const pts=ks.map((k,i)=>{const r=toR(prev[k]||20);return`${cx+Math.cos(angs[i])*r},${cy+Math.sin(angs[i])*r}`}).join(' ');svg+=`<polygon points="${pts}" fill="rgba(96,165,250,.08)" stroke="rgba(96,165,250,.3)" stroke-width="1"/>`}const pts=ks.map((k,i)=>{const r=toR(lat[k]||20);return`${cx+Math.cos(angs[i])*r},${cy+Math.sin(angs[i])*r}`}).join(' ');svg+=`<polygon points="${pts}" fill="rgba(74,222,128,.15)" stroke="#4ADE80" stroke-width="1.5"/>`;ks.forEach((k,i)=>{const r=toR(lat[k]||20);svg+=`<circle cx="${cx+Math.cos(angs[i])*r}" cy="${cy+Math.sin(angs[i])*r}" r="3" fill="#4ADE80"/>`});document.getElementById('radarSvg').innerHTML=svg;let leg=ks.map((k,i)=>`${lb[i]}:<b>${lat[k]||'-'}</b>`).join(' ');if(prev){leg+='<br><span style="color:var(--p2)">前回</span> vs <span style="color:var(--p1)">最新</span>';const diffs=ks.map((k,i)=>{const d=(lat[k]||0)-(prev[k]||0);return d>0?lb[i]+'+'+d:d<0?lb[i]+d:null}).filter(Boolean);if(diffs.length)leg+=' '+diffs.join(' ')}document.getElementById('radarLeg').innerHTML=leg}
 
 /* UI */
 function closeMo(o,e){if(e.target===o)o.classList.remove('show')}
